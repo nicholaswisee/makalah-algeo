@@ -9,51 +9,18 @@
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
+\usepackage{hyperref}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
 
-\title{Conference Paper Title*\\
-{\footnotesize \textsuperscript{*}Note: Sub-titles are not captured for https://ieeexplore.ieee.org  and
-should not be used}
-\thanks{Identify applicable funding agency here. If none, delete this.}
-}
+\title{Analysis of Steady-State Behavior in Server Queues using Markov Chains and Eigenvalues in the M/M/1 Model\\}
 
-\author{\IEEEauthorblockN{1\textsuperscript{st} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
-\and
-\IEEEauthorblockN{2\textsuperscript{nd} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
-\and
-\IEEEauthorblockN{3\textsuperscript{rd} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
-\and
-\IEEEauthorblockN{4\textsuperscript{th} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
-\and
-\IEEEauthorblockN{5\textsuperscript{th} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
-\and
-\IEEEauthorblockN{6\textsuperscript{th} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
+\author{\IEEEauthorblockN{Nicholas Wise Saragih Sumbayak - 13524037}
+\IEEEauthorblockA{\textit{School of Electrical Engineering and Informatics} \\
+\textit{Institut Teknologi Bandung}\\
+Jl. Ganesha 10 Bandung 40132, Indonesia \\
+\href{mailto:nicholasaragih@gmail.com}{nicholasaragih@gmail.com} | \href{mailto:13524037@std.stei.itb.ac.id}{13524037@std.stei.itb.ac.id}}
 }
 
 \maketitle
@@ -69,42 +36,163 @@ component, formatting, style, styling, insert.
 \end{IEEEkeywords}
 
 \section{Introduction}
-This document is a model and instructions for \LaTeX.
-Please observe the conference page limits. For more information about how to become an IEEE Conference author or how to write your paper, please visit   IEEE Conference Author Center website: https://conferences.ieeeauthorcenter.ieee.org/.
+Queueing behavior arises naturally in nearly every computing environment
+where resources are shared among multiple tasks. Whenever incoming work arrives 
+faster than it can be immediately processed, the excess work must wait, forming
+a queue. This phenomenon appears in a broad range of systems, including CPU 
+scheduling, packet forwarding in routers, job dispatching in cloud infrastructures,
+disk I/O scheduling, and networked application servers. The performance of 
+these systems is heavily influenced by their queueing characteristics, making analytical
+models essential for understanding and improving real-world performance \cite{b1}.
 
-\subsection{Maintaining the Integrity of the Specifications}
+Modern computing workloads are highly variable and unpredictable. 
+Task arrivals do not occur at fixed intervals, and service times fluctuate 
+due to user behavior, network delays, resource contention, and software-level
+scheduling. These uncertainties make deterministic approaches nonoptimal. 
+However, probabilistic theory enables engineers to determine whether a server will remain stable 
+under a particular load, estimate average waiting times, and understand how 
+performance degrades as traffic increases.
 
-The IEEEtran class file is used to format your paper and style the text. All margins, 
-column widths, line spaces, and text fonts are prescribed; please do not 
-alter them. You may note peculiarities. For example, the head margin
-measures proportionately more than is customary. This measurement 
-and others are deliberate, using specifications that anticipate your paper 
-as one part of the entire proceedings, and not as an independent document. 
-Please do not revise any of the current designations.
+To formally analyze such behavior, queueing systems are commonly modeled as 
+stochastic processes, with one of the simplest and most fundamental being the M/M/1 queue. 
+In this model, arrivals follow a Poisson process with service times that follow an exponential
+distribution, all handled by a single server. Despite its simplicity, the model can capture
+trends and predict behaviors such as stability, queue buildup, and performance spikes. 
+\cite{b2}.
 
-\section{Prepare Your Paper Before Styling}
-Before you begin to format your paper, first write and save the content as a 
-separate text file. Complete all content and organizational editing before 
-formatting. Please note sections \ref{AA} to \ref{FAT} below for more information on 
-proofreading, spelling and grammar.
+The M/M/1 queue can be naturally represented as a Markov chain, where each state corresponds 
+to the current number of jobs in the system. Transitions between states reflect arrivals and 
+completions of jobs, producing a stochastic matrix representing the dynamic behavior of 
+the queue. The steady-state distribution corresponds to the eigenvector 
+associated with eigenvalue 1, consistent with standard results in Markov chain theory \cite{b3}. 
+This connection between queueing systems and linear algebra provides a powerful framework for 
+analyzing server load and predicting performance under varying traffic conditions.
 
-Keep your text and graphic files separate until after the text has been 
-formatted and styled. Do not number text heads---{\LaTeX} will do that 
-for you.
+In this paper, we examine the steady-state behavior of the M/M/1 queue using Markov chains 
+and eigenvalue analysis. We first derive the transition matrix of the system and compute 
+its stationary distribution using the eigenvector method. We then compare this theoretical 
+distribution with the known closed-form solution of the M/M/1 queue. To validate the  
+results, a queue simulation is implemented in C++, allowing us to observe empirical queue 
+behavior under different arrival and service rates. By comparing theoretical predictions with 
+simulation outcomes, we illustrate how mathematical modeling can determine whether a server 
+can withstand a particular load and how queue lengths evolve over time.
 
-\subsection{Abbreviations and Acronyms}\label{AA}
-Define abbreviations and acronyms the first time they are used in the text, 
-even after they have been defined in the abstract. Abbreviations such as 
-IEEE, SI, MKS, CGS, ac, dc, and rms do not have to be defined. Do not use 
-abbreviations in the title or heads unless they are unavoidable.
+\section{Theoretical Foundation}
 
-\subsection{Units}
-\begin{itemize}
-\item Use either SI (MKS) or CGS as primary units. (SI units are encouraged.) English units may be used as secondary units (in parentheses). An exception would be the use of English units as identifiers in trade, such as ``3.5-inch disk drive''.
-\item Avoid combining SI and CGS units, such as current in amperes and magnetic field in oersteds. This often leads to confusion because equations do not balance dimensionally. If you must use mixed units, clearly state the units for each quantity that you use in an equation.
-\item Do not mix complete spellings and abbreviations of units: ``Wb/m\textsuperscript{2}'' or ``webers per square meter'', not ``webers/m\textsuperscript{2}''. Spell out units when they appear in text: ``. . . a few henries'', not ``. . . a few H''.
-\item Use a zero before decimal points: ``0.25'', not ``.25''. Use ``cm\textsuperscript{3}'', not ``cc''.)
-\end{itemize}
+\subsection{Matrices}
+\subsubsection{Definition}
+A matrix is a rectangular array of numbers, symbols, or expressions, arranged in rows and columns.
+The individual items in a matrix are called its elements or entries. The size of a matrix is described
+in terms of the number of rows and columns it contains. Generally, a general $m \times n$ matrix 
+may be denoted as:
+
+\[
+A = 
+\begin{bmatrix}
+a_{11} & a_{12} & \cdots & a_{1n} \\
+a_{21} & a_{22} & \cdots & a_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+a_{m1} & a_{m2} & \cdots & a_{mn} \\
+\end{bmatrix}
+\]
+
+with A denoting the matrix, m the number of rows, n the number of columns, and $a_{ij}$ the element
+in row $i$ and column $j$. A matrix with size $n \times n$ is called a square matrix of order n and
+the elements $a_{ii}$ (where the row and column indices are equal) form the main diagonal
+of matrix A.
+
+\subsubsection{Row and Column Vectors}
+A matrix with only one row or one column is called a row matrix (or a row vector) or column matrix 
+(or a column vector), respectively. A general $m \times 1$ column matrix and a $1 \times n$ row matrix b may be denoted as:
+
+\begin{center}
+    $\textbf{a} = \begin{bmatrix} a_{1} \\ a_{2} \\ \vdots \\ a_{m} \end{bmatrix}$ and $\textbf{b} = \begin{bmatrix} b_{1} & b_{2} & \cdots & b_{n} \end{bmatrix}$
+\end{center}
+
+\subsubsection{Matrix Addition and Subtraction}
+If A and B are matrices of the same size, their sum (A + B) and difference (A - B) are obtained by adding or 
+subtracting their corresponding entries. Matrices of different sizes cannot be added or subtracted. In matrix notation,
+if $A = [a_{ij}]$ and $B = [b_{ij}]$ have the same size, then $(A \pm B)_{ij} = a_{ij} \pm b_{ij}$. 
+
+\subsubsection{Scalar Multiplication}
+If A is any matrix and k is any scalar, then the scalar multiple kA is the matrix obtained by multiplying every entry of A by k.
+In matrix notation, if $A = [a_{ij}]$, then $(kA)_{ij} = k a_{ij}$.
+
+\begin{center}
+$A = \begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \end{bmatrix} \rightarrow 2A = \begin{bmatrix} 2 & 4 & 6 \\ 8 & 10 & 12 \end{bmatrix}$    
+\end{center}
+
+\subsubsection{Matrix Multiplication}
+If A is an $m \times n$ matrix and B is an $n \times p$ matrix, then the product AB is defined to be the $m \times p$ matrix C
+whose entries are given by:
+\[c_{ij} = \sum_{k=1}^{n} a_{ik} b_{kj}\]
+
+In simpler terms, to find entry $c_{ij}$ of the product matrix C, multiply the corresponding entries of the $i^{th}$ row of 
+matrix A with the $j^{th}$ column of matrix B and add the results. Given the example below:
+
+\begin{center}
+$A = \begin{bmatrix} 1 & 2 & 3 \\ 3 & 4 & 0 \end{bmatrix}$ , $B = \begin{bmatrix} 2 & 1 \\ 4 & 3 \\ 5 & 0 \end{bmatrix}$
+\end{center}
+
+\begin{center}
+$C = AB = \begin{bmatrix} 25 & 7 \\ 22 & 15 \end{bmatrix}$
+\end{center}
+
+Since A is a $2 \times 3$ matrix and B is a $3 \times 2$ matrix, the resulting product AB is a $2 \times 2$ matrix. For example,
+to determine entry $c_{11}$ of the product matrix AB, we multiply the corresponding entries of the first row of matrix A 
+with the first column of matrix B and add the results.
+
+\subsubsection{Transpose of a Matrix}
+Given a matrix $A$ of size $m \times n$, the transpose of $A$, denoted by $A^T$, is the $n \times m$ matrix obtained 
+by interchanging the rows and columns of A. In matrix notation, if $B = A^T$, then the entries of B are defined as
+$b_{ij} = a_{ji}$, $1 \leq i \leq n$, $1 \leq j \leq m$.
+\begin{center}
+$A = \begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \end{bmatrix} \rightarrow A^T = \begin{bmatrix} 1 & 4 \\ 2 & 5 \\ 3 & 6 \end{bmatrix}$
+\end{center}
+
+\subsection{Eigenvalues and Eigenvectors}
+
+If A is an $n \times n$ matrix, then a nonzero vector $\textbf{v}$ in $R^n$ is called an eigenvector of A if there exists a scalar 
+$\lambda$ such that:
+
+\begin{center}
+$A \textbf{v} = \lambda \textbf{v}$
+\end{center}
+
+The scalar $\lambda$ is called the eigenvalue of A corresponding to the eigenvector $\textbf{v}$. In other words, multiplying 
+the matrix A by the vector $\textbf{v}$ results in a new vector that is a scalar multiple of the original vector $\textbf{v}$.
+
+Given a matrix A with size $n \times n$, the eigenvalues and eigenvectors are found by solving the 
+following characteristic equation:
+\begin{center}
+$Ax = \lambda x$ \\
+$IAx = \lambda Ix$ \\
+$Ax = \lambda Ix$ \\
+$(A - \lambda I)x = 0$ \\
+\end{center}
+
+Since $x = 0$ is the only trivial solution, for $(A - \lambda I)x = 0$ to have non-trivial solutions, 
+the matrix $(A - \lambda I)$ must be singular, and therefore $det(A - \lambda I)$ must be zero.
+The polynomial given by $det(A - \lambda I) = 0$ is called the characteristic equation of A, and the solutions
+to such equation are the eigenvalues of A, otherwise denoted as the characteristic roots.
+
+
+\subsection{Markov Chains}
+A markov chain is a mathematical system used to model systems that transition between different states over time.
+The defining characteristic of a markov chain is that the probability of transitioning to the next state depends only
+on the current state, and not on the sequence of states that preceded it. This property is known as the markov property.
+
+A markov chain is commonly represented using a matrix formed by probability vectors which represent the likelihood of the system 
+transitioning from one state to another. This matrix is called the transition matrix and the state vectors at successive time 
+intervals can are defined by  $x(n+1) = P x(n)$, where $P$ is the transition matrix and $P_{ij}$ is the probability that the system
+will be in state $i$ at time $n+1$ given that it was in state $j$ at time $n$.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=\columnwidth]{Markov-Chains-in-NLP.png}}
+\caption{Example of a Markov Chain representing weather states \cite{b6}.}
+\label{fig:markov}
+\end{figure}
+
 
 \subsection{Equations}
 Number equations consecutively. To make your 
@@ -133,7 +221,7 @@ Please don't use the \verb|{eqnarray}| equation environment. Use
 \verb|{align}| or \verb|{IEEEeqnarray}| instead. The \verb|{eqnarray}|
 environment leaves unsightly spaces around relation symbols.
 
-Please note that the \verb|{subequations}| environment in {\LaTeX}
+Please note that the \verb|{subequations}| env ironment in {\LaTeX}
 will increment the main equation counter even when there are no
 equation numbers displayed. If you forget that, you might write an
 article in which the equation numbers skip from (17) to (20), causing
@@ -273,17 +361,18 @@ For papers published in translation journals, please give the English
 citation first, followed by the original foreign-language citation \cite{b6}.
 
 \begin{thebibliography}{00}
-\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-\bibitem{b2} J. Clerk Maxwell, A Treatise on Electricity and Magnetism, 3rd ed., vol. 2. Oxford: Clarendon, 1892, pp.68--73.
-\bibitem{b3} I. S. Jacobs and C. P. Bean, ``Fine particles, thin films and exchange anisotropy,'' in Magnetism, vol. III, G. T. Rado and H. Suhl, Eds. New York: Academic, 1963, pp. 271--350.
-\bibitem{b4} K. Elissa, ``Title of paper if known,'' unpublished.
-\bibitem{b5} R. Nicole, ``Title of paper with only first word capitalized,'' J. Name Stand. Abbrev., in press.
-\bibitem{b6} Y. Yorozu, M. Hirano, K. Oka, and Y. Tagawa, ``Electron spectroscopy studies on magneto-optical media and plastic substrate interface,'' IEEE Transl. J. Magn. Japan, vol. 2, pp. 740--741, August 1987 [Digests 9th Annual Conf. Magnetics Japan, p. 301, 1982].
-\bibitem{b7} M. Young, The Technical Writer's Handbook. Mill Valley, CA: University Science, 1989.
-\bibitem{b8} D. P. Kingma and M. Welling, ``Auto-encoding variational Bayes,'' 2013, arXiv:1312.6114. [Online]. Available: https://arxiv.org/abs/1312.6114
-\bibitem{b9} S. Liu, ``Wi-Fi Energy Detection Testbed (12MTC),'' 2023, gitHub repository. [Online]. Available: https://github.com/liustone99/Wi-Fi-Energy-Detection-Testbed-12MTC
-\bibitem{b10} ``Treatment episode data set: discharges (TEDS-D): concatenated, 2006 to 2009.'' U.S. Department of Health and Human Services, Substance Abuse and Mental Health Services Administration, Office of Applied Studies, August, 2013, DOI:10.3886/ICPSR30122.v2
-\bibitem{b11} K. Eves and J. Valasek, ``Adaptive control for singularly perturbed systems examples,'' Code Ocean, Aug. 2023. [Online]. Available: https://codeocean.com/capsule/4989235/tree
+\bibitem{b1} M. Harchol-Balter, \textit{Performance Modeling and Design of Computer Systems: Queueing Theory in Action}. Cambridge, U.K.: Cambridge Univ. Press, 2013.
+
+\bibitem{b2} L. Kleinrock, \textit{Queueing Systems, Volume 1: Theory}. New York, NY, USA: Wiley, 1975.
+
+\bibitem{b3} J. R. Norris, \textit{Markov Chains}. Cambridge, U.K.: Cambridge Univ. Press, 1997.
+
+\bibitem{b4} H. Anton and C. Rorres, \textit{Elementary Linear Algebra: Applications Version}, 11th ed. Hoboken, NJ, USA: Wiley, 2013.
+
+\bibitem{b5} Munir, Rinaldi. "Nilai Eigen dan Vektor Eigen (Bagian 1)", School of Electrical Engineering and Informatics (STEI) ITB, 2025. [Online]. Available: \url{https://informatika.stei.itb.ac.id/~rinaldi.munir/AljabarGeometri/2025-2026/Algeo-19-Nilai-Eigen-dan-Vektor-Eigen-Bagian1-2025.pdf}
+    
+\bibitem{b6} "Markov Chains in NLP," GeeksforGeeks. [Online]. Available: \url{https://www.geeksforgeeks.org/nlp/markov-chains-in-nlp/}. [Accessed: Dec. 16, 2025].
+
 \end{thebibliography}
 
 \vspace{12pt}
