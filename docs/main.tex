@@ -10,9 +10,16 @@
 \usepackage{textcomp}
 \usepackage{xcolor}
 \usepackage{hyperref}
+\usepackage{fancyhdr}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
+
+\pagestyle{fancy}
+\fancyhf{} 
+\fancyfoot[L]{IF2123 Linear and Geometrical Algebra - 2025/2026}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
 
 \title{Analysis of Steady-State Behavior in Server Queues using Markov Chains and Eigenvalues in the M/M/1 Model\\}
 
@@ -60,15 +67,15 @@ distribution, all handled by a single server. Despite its simplicity, the model 
 trends and predict behaviors such as stability, queue buildup, and performance spikes. 
 \cite{b2}.
 
-The M/M/1 queue can be naturally represented as a Markov chain, where each state corresponds 
+The M/M/1 queue can be naturally represented as a Markov Chain, where each state corresponds 
 to the current number of jobs in the system. Transitions between states reflect arrivals and 
 completions of jobs, producing a stochastic matrix representing the dynamic behavior of 
 the queue. The steady-state distribution corresponds to the eigenvector 
-associated with eigenvalue 1, consistent with standard results in Markov chain theory \cite{b3}. 
+associated with eigenvalue 1, consistent with standard results in Markov Chain theory \cite{b3}. 
 This connection between queueing systems and linear algebra provides a powerful framework for 
 analyzing server load and predicting performance under varying traffic conditions.
 
-In this paper, we examine the steady-state behavior of the M/M/1 queue using Markov chains 
+In this paper, we examine the steady-state behavior of the M/M/1 queue using Markov Chains 
 and eigenvalue analysis. We first derive the transition matrix of the system and compute 
 its stationary distribution using the eigenvector method. We then compare this theoretical 
 distribution with the known closed-form solution of the M/M/1 queue. To validate the  
@@ -80,7 +87,6 @@ can withstand a particular load and how queue lengths evolve over time.
 \section{Theoretical Foundation}
 
 \subsection{Matrices}
-\subsubsection{Definition}
 A matrix is a rectangular array of numbers, symbols, or expressions, arranged in rows and columns.
 The individual items in a matrix are called its elements or entries. The size of a matrix is described
 in terms of the number of rows and columns it contains. Generally, a general $m \times n$ matrix 
@@ -176,16 +182,48 @@ the matrix $(A - \lambda I)$ must be singular, and therefore $det(A - \lambda I)
 The polynomial given by $det(A - \lambda I) = 0$ is called the characteristic equation of A, and the solutions
 to such equation are the eigenvalues of A, otherwise denoted as the characteristic roots.
 
+Geometrically, an eigenvector of a matrix A represents a direction in $R^n$ that is preserved
+under the linear transformation defined by A. While most vectors are both rotated and scaled
+by a linear transformation, eigenvectors are only scaled by the corresponding eigenvalue.
+If $|\lambda| > 1$, the transformation stretches vectors in the direction of the eigenvector,
+if $|\lambda| < 1$, it contracts them, and if $\lambda < 0$, it reverses their direction.
 
 \subsection{Markov Chains}
-A markov chain is a mathematical system used to model systems that transition between different states over time.
-The defining characteristic of a markov chain is that the probability of transitioning to the next state depends only
-on the current state, and not on the sequence of states that preceded it. This property is known as the markov property.
+A Markov Chain is a mathematical system used to model systems that transition between different states over time.
+The defining characteristic of a Markov Chain is that the probability of transitioning to the next state depends only
+on the current state, and not on the sequence of states that preceded it. This property is known as the Markov property.
 
-A markov chain is commonly represented using a matrix formed by probability vectors which represent the likelihood of the system 
-transitioning from one state to another. This matrix is called the transition matrix and the state vectors at successive time 
-intervals can are defined by  $x(n+1) = P x(n)$, where $P$ is the transition matrix and $P_{ij}$ is the probability that the system
-will be in state $i$ at time $n+1$ given that it was in state $j$ at time $n$.
+A Markov Chain is commonly represented using a matrix formed by transition probabilities between states.
+This matrix is called the transition matrix, and the state vectors at successive time intervals are defined by
+\[
+x(n+1) = P x(n),
+\]
+where $x(n)$ is a probability vector describing the state distribution at time $n$, and $P_{ij}$ is the probability
+that the system will be in state $i$ at time $n+1$ given that it was in state $j$ at time $n$ \cite{b4}.
+
+The transition matrix $P$ is a stochastic matrix, meaning that all of its entries are nonnegative and that the sum
+of each column is equal to one. These properties ensure that multiplying a probability vector by $P$ produces
+another valid probability vector.
+
+As an example, consider a system with three states. A possible transition matrix for this system is
+\[
+P =
+\begin{bmatrix}
+0.6 & 0.2 & 0.1 \\
+0.3 & 0.5 & 0.2 \\
+0.1 & 0.3 & 0.7
+\end{bmatrix}.
+\]
+Each column of this matrix sums to one, and each entry represents the probability of transitioning from one state
+to another in a single time step.
+
+From a linear algebra perspective, the long-term behavior of a Markov Chain is determined by the eigenvalues
+and eigenvectors of its transition matrix. In particular, a steady-state distribution is a probability vector
+$x$ that remains unchanged under the transition matrix, satisfying
+\[
+P x = x.
+\]
+This corresponds to an eigenvector associated with the eigenvalue $\lambda = 1$.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[width=\columnwidth]{Markov-Chains-in-NLP.png}}
@@ -370,7 +408,7 @@ citation first, followed by the original foreign-language citation \cite{b6}.
 \bibitem{b4} H. Anton and C. Rorres, \textit{Elementary Linear Algebra: Applications Version}, 11th ed. Hoboken, NJ, USA: Wiley, 2013.
 
 \bibitem{b5} Munir, Rinaldi. "Nilai Eigen dan Vektor Eigen (Bagian 1)", School of Electrical Engineering and Informatics (STEI) ITB, 2025. [Online]. Available: \url{https://informatika.stei.itb.ac.id/~rinaldi.munir/AljabarGeometri/2025-2026/Algeo-19-Nilai-Eigen-dan-Vektor-Eigen-Bagian1-2025.pdf}
-    
+
 \bibitem{b6} "Markov Chains in NLP," GeeksforGeeks. [Online]. Available: \url{https://www.geeksforgeeks.org/nlp/markov-chains-in-nlp/}. [Accessed: Dec. 16, 2025].
 
 \end{thebibliography}
