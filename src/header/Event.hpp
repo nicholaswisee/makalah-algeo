@@ -4,12 +4,12 @@
 enum EventType { ARRIVAL, DEPARTURE };
 
 struct Event {
-  double time;
-  EventType type;
+    double time;
+    EventType type;
 
-  bool operator>(const Event& other) const {
-    return time > other.time;
-  }
+    bool operator>(const Event& other) const {
+        return time > other.time;
+    }
 };
 
 #endif
