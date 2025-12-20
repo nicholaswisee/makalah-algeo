@@ -13,6 +13,11 @@ class MarkovChainAnalysis {
     // Build the generator matrix (Q-matrix) for M/M/1 queue CTMC
     void buildGeneratorMatrix();
 
+    // Linear algebra helper functions
+    void gaussianElimination(std::vector<std::vector<double>>& A, double tolerance);
+    std::vector<double> backSubstitution(const std::vector<std::vector<double>>& A);
+    void normalizeDistribution(std::vector<double>& pi);
+
    public:
     // constructor
     MarkovChainAnalysis(int states, double arrivalRate, double serviceRate);
