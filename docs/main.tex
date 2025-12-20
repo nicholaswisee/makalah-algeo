@@ -33,13 +33,33 @@ Institut Teknologi Bandung, Jl. Ganesha 10 Bandung 40132, Indonesia \\
 \maketitle
 
 \begin{abstract}
-This document is a model and instructions for \LaTeX.
-This and the IEEEtran.cls file define the components of your paper [title, text, heads, etc.]. *CRITICAL: Do Not Use Symbols, Special Characters, Footnotes,
-or Math in Paper Title or Abstract.
+Queueing systems are fundamental to many computing environments where shared
+resources must handle randomly arriving workloads. One of the most widely
+used analytical models for such systems is the M/M/1 queue, which represents
+a single-server system with stochastic arrivals and service times. This paper
+analyzes the steady-state behavior of the M/M/1 queue using concepts from
+linear algebra and Markov chain theory.
+
+The system is modeled as a continuous-time Markov chain, where each state
+represents the number of jobs in the system and transitions are governed by
+arrival and service rates. The steady-state distribution is obtained by
+solving a system of linear balance equations derived from the generator
+matrix, highlighting the role of eigenvalues and null spaces in determining
+long-term system behavior. The stability condition for the queue is also
+examined and shown to depend on the relationship between the arrival and
+service rates.
+
+To validate the analytical results, a discrete-event simulation of the M/M/1
+queue is implemented in C++. The simulation estimates steady-state
+probabilities and performance metrics, which are then compared with
+theoretical predictions. The results demonstrate strong agreement between
+the analytical model and simulation for stable systems, confirming the
+correctness of the continuous-time formulation.
 \end{abstract}
 
 \begin{IEEEkeywords}
-component, formatting, style, styling, insert.
+M/M/1 queue, queueing theory, continuous-time Markov chain, steady-state analysis,
+generator matrix, eigenvalues, discrete-event simulation
 \end{IEEEkeywords}
 
 \section{Introduction}
@@ -60,12 +80,18 @@ However, probabilistic theory enables engineers to determine whether a server wi
 under a particular load, estimate average waiting times, and understand how
 performance degrades as traffic increases.
 
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=\columnwidth]{fifo-queuing.jpg}}
+\caption{A network router queue with the FIFO algorithm \cite{b2}.}
+\label{fig:network-queue}
+\end{figure}
+
 To formally analyze such behavior, queueing systems are commonly modeled as
 stochastic processes, with one of the simplest and most fundamental being the M/M/1 queue.
 In this model, arrivals follow a Poisson process with service times that follow an exponential
 distribution, all handled by a single server. Despite its simplicity, the model can capture
 trends and predict behaviors such as stability, queue buildup, and performance spikes.
-\cite{b2}.
+\cite{b3}.
 
 The M/M/1 queue can be naturally represented as a Markov process, where each
 state corresponds to the number of jobs in the system. Due to the continuous
@@ -225,7 +251,7 @@ This corresponds to an eigenvector associated with the eigenvalue $\lambda = 1$.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[width=\columnwidth]{Markov-Chains-in-NLP.png}}
-\caption{Example of a Markov Chain representing weather states \cite{b6}.}
+\caption{Example of a Markov Chain representing weather states \cite{b5}.}
 \label{fig:markov}
 \end{figure}
 
@@ -250,11 +276,11 @@ $\rho < 1$. The steady-state probability of having $n$ jobs
 in the system is given by:
 \[P_n = (1 - \rho) \rho^n, \quad n = 0, 1, 2, \ldots\]
 where $P_n$ represents the probability of having $n$ jobs in the system at
-steady state \cite{b2}.
+steady state \cite{b3}.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[width=\columnwidth]{Mm1_queue.png}}
-\caption{An M/M/1 queueing node \cite{b7}.}
+\caption{An M/M/1 queueing node \cite{b6}.}
 \label{fig:mm1}
 \end{figure}
 
@@ -268,12 +294,12 @@ completions.
 An arrival causes the system to transition from state $n$ to $n+1$ at rate
 $\lambda$, while a service completion causes a transition from state $n$ to
 $n-1$ at rate $\mu$ for $n > 0$. This structure defines a birth--death process,
-a special class of CTMCs commonly used to model queueing systems.
+a special class of CTMCs commonly used to model queueing systems \cite{b3}.
 
 The dynamics of a CTMC are characterized by an infinitesimal generator matrix
 $Q$, whose off-diagonal entries represent transition rates between states and
 whose diagonal entries ensure that each row sums to zero. For the M/M/1 queue,
-the generator matrix has the form
+the generator matrix has the form:
 \[
 Q =
 \begin{bmatrix}
@@ -289,7 +315,7 @@ set $\{0,1,\dots,N\}$. This approximation allows matrix-based analysis while
 preserving the essential structure of the queueing process.
 \begin{figure}[htbp]
 \centerline{\includegraphics[width=\columnwidth]{markov-queue.png}}
-\caption{A Markov Chain representation of a queue \cite{b9}.}
+\caption{A Markov Chain representation of a queue \cite{b7}.}
 \label{fig:markov-queue}
 \end{figure}
 
@@ -332,7 +358,7 @@ state distribution is given by
 \pi_n = (1 - \rho)\rho^n, \quad \rho = \frac{\lambda}{\mu}.
 \]
 When $\lambda \ge \mu$, no normalizable solution exists, reflecting the fact
-that the queue grows without bound and the system fails to reach equilibrium.
+that the queue grows without bound and the system fails to reach equilibrium \cite{b8}.
 
 Although eigenvalue analysis provides useful intuition for understanding
 stability in discrete-time systems, direct application of eigenvector methods
@@ -342,6 +368,45 @@ framework consistent with the underlying stochastic process.
 
 
 \subsection{C++ Queue Simulation}
+
+To complement the analytical steady-state analysis, a discrete-event
+simulation of the M/M/1 queue was implemented in \texttt{C++}. The purpose
+of this simulation is to estimate the steady-state distribution of queue
+lengths and to validate the results obtained from the continuous-time
+Markov chain model.
+
+The simulation models the system as a continuous-time process driven by
+two random events: arrivals and service completions. Inter-arrival times
+are generated from an exponential distribution with rate $\lambda$, and
+service times follow an exponential distribution with rate $\mu$. Events
+are processed in chronological order, and the system state is updated
+whenever an event occurs, allowing the queue to evolve naturally over
+continuous time.
+
+During the simulation, the total amount of time spent in each state is
+recorded. After running the simulation for a sufficiently long duration
+$T$, the steady-state probability of being in state $n$ is estimated by
+\[
+\hat{P}_n = \frac{\text{total time spent in state } n}{T}.
+\]
+For stable systems where $\lambda < \mu$, these estimates converge to the
+true steady-state distribution.
+
+The simulator also computes performance measures such as the average
+number of jobs in the system, which are directly compared with theoretical
+results from queueing theory to evaluate accuracy.
+
+The simulation was implemented in \texttt{C++} due to its efficiency,
+precise control over random number generation, and native support from
+the Standard Template Library (STL) for queues. These properties make
+\texttt{C++} well suited for simulations that require accurate timing
+and reproducible results. All outputs are exported in CSV format for
+further analysis.
+
+Unlike eigenvector-based methods applied to discrete-time transition
+matrices, the discrete-event simulation directly follows the
+continuous-time behavior of the M/M/1 queue, making it a reliable
+numerical benchmark for validating the analytical model.
 
 
 \section{Results and Discussion}
@@ -357,7 +422,7 @@ quantities and units. For example, write ``Temperature (K)'', not
 ``Temperature/K''.
 
 \appendix{}
-The Author
+GitHub Repository: \url{https://github.com/nicholaswisee/makalah-algeo}
 
 \section*{Acknowledgment}
 First and foremost, the author would like to express his profound gratitude
@@ -378,28 +443,20 @@ their support and collaboration.
 \begin{thebibliography}{00}
 \bibitem{b1} M. Harchol-Balter, \textit{Performance Modeling and Design of Computer Systems: Queueing Theory in Action}. Cambridge, U.K.: Cambridge Univ. Press, 2013.
 
-\bibitem{b2} L. Kleinrock, \textit{Queueing Systems, Volume 1: Theory}. New York, NY, USA: Wiley, 1975.
+\bibitem{b2} "Queuing and Scheduling," NetworkAcademy.IO, CCNA Network Services. [Online]. Available: \url{https://www.networkacademy.io/ccna/network-services/queuing-and-scheduling}. [Accessed: Dec. 20, 2025].
 
-\bibitem{b3} J. R. Norris, \textit{Markov Chains}. Cambridge, U.K.: Cambridge Univ. Press, 1997.
+\bibitem{b3} L. Kleinrock, \textit{Queueing Systems, Volume 1: Theory}. New York, NY, USA: Wiley, 1975.
 
 \bibitem{b4} H. Anton and C. Rorres, \textit{Elementary Linear Algebra: Applications Version}, 11th ed. Hoboken, NJ, USA: Wiley, 2013.
 
-\bibitem{b5} Munir, Rinaldi. "Nilai Eigen dan Vektor Eigen (Bagian 1)", School of Electrical Engineering and Informatics (STEI) ITB, 2025. [Online]. Available: \url{https://informatika.stei.itb.ac.id/~rinaldi.munir/AljabarGeometri/2025-2026/Algeo-19-Nilai-Eigen-dan-Vektor-Eigen-Bagian1-2025.pdf}
+\bibitem{b5} "Markov Chains in NLP," GeeksforGeeks. [Online]. Available: \url{https://www.geeksforgeeks.org/nlp/markov-chains-in-nlp/}. [Accessed: Dec. 15, 2025].
 
-\bibitem{b6} "Markov Chains in NLP," GeeksforGeeks. [Online]. Available: \url{https://www.geeksforgeeks.org/nlp/markov-chains-in-nlp/}. [Accessed: Dec. 15, 2025].
+\bibitem{b6} "M/M/1 queue," Wikipedia. [Online]. Available: \url{https://en.wikipedia.org/wiki/M/M/1_queue}. [Accessed: Dec. 16, 2025].
 
-\bibitem{b7} "M/M/1 queue," Wikipedia. [Online]. Available: \url{https://en.wikipedia.org/wiki/M/M/1_queue}. [Accessed: Dec. 16, 2025].
+\bibitem{b7} G. Giambene, ``Markov chains and queuing theory,'' in \emph{Queuing Theory and Telecommunications}, Textbooks in Telecommunication Engineering, Cham, Switzerland: Springer, 2021, doi: 10.1007/978-3-030-75973-5\_4.
 
 \bibitem{b8} M. Harchol-Balter, \textit{Performance Modeling and Design of Computer Systems: Queueing Theory in Action}. Cambridge, U.K.: Cambridge Univ. Press, 2013.
 
-\bibitem{b9} G. Giambene, ``Markov chains and queuing theory,'' in \emph{Queuing Theory and Telecommunications},
-Textbooks in Telecommunication Engineering, Cham, Switzerland: Springer, 2021,
-doi: 10.1007/978-3-030-75973-5\_4.
-
 \end{thebibliography}
-
-\vspace{12pt}
-\color{red}
-IEEE conference templates contain guidance text for composing and formatting conference papers. Please ensure that all template text is removed from your conference paper prior to submission to the conference. Failure to remove the template text from your paper may result in your paper not being published.
 
 \end{document}
