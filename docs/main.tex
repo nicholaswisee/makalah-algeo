@@ -16,7 +16,7 @@
 \begin{document}
 
 \pagestyle{fancy}
-\fancyhf{} 
+\fancyhf{}
 \fancyfoot[L]{IF2123 Linear and Geometrical Algebra - 2025/2026}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
@@ -34,7 +34,7 @@ Institut Teknologi Bandung, Jl. Ganesha 10 Bandung 40132, Indonesia \\
 
 \begin{abstract}
 This document is a model and instructions for \LaTeX.
-This and the IEEEtran.cls file define the components of your paper [title, text, heads, etc.]. *CRITICAL: Do Not Use Symbols, Special Characters, Footnotes, 
+This and the IEEEtran.cls file define the components of your paper [title, text, heads, etc.]. *CRITICAL: Do Not Use Symbols, Special Characters, Footnotes,
 or Math in Paper Title or Abstract.
 \end{abstract}
 
@@ -44,44 +44,44 @@ component, formatting, style, styling, insert.
 
 \section{Introduction}
 Queueing behavior arises naturally in nearly every computing environment
-where resources are shared among multiple tasks. Whenever incoming work arrives 
+where resources are shared among multiple tasks. Whenever incoming work arrives
 faster than it can be immediately processed, the excess work must wait, forming
-a queue. This phenomenon appears in a broad range of systems, including CPU 
+a queue. This phenomenon appears in a broad range of systems, including CPU
 scheduling, packet forwarding in routers, job dispatching in cloud infrastructures,
-disk I/O scheduling, and networked application servers. The performance of 
+disk I/O scheduling, and networked application servers. The performance of
 these systems is heavily influenced by their queueing characteristics, making analytical
 models essential for understanding and improving real-world performance \cite{b1}.
 
-Modern computing workloads are highly variable and unpredictable. 
-Task arrivals do not occur at fixed intervals, and service times fluctuate 
+Modern computing workloads are highly variable and unpredictable.
+Task arrivals do not occur at fixed intervals, and service times fluctuate
 due to user behavior, network delays, resource contention, and software-level
-scheduling. These uncertainties make deterministic approaches nonoptimal. 
-However, probabilistic theory enables engineers to determine whether a server will remain stable 
-under a particular load, estimate average waiting times, and understand how 
+scheduling. These uncertainties make deterministic approaches nonoptimal.
+However, probabilistic theory enables engineers to determine whether a server will remain stable
+under a particular load, estimate average waiting times, and understand how
 performance degrades as traffic increases.
 
-To formally analyze such behavior, queueing systems are commonly modeled as 
-stochastic processes, with one of the simplest and most fundamental being the M/M/1 queue. 
+To formally analyze such behavior, queueing systems are commonly modeled as
+stochastic processes, with one of the simplest and most fundamental being the M/M/1 queue.
 In this model, arrivals follow a Poisson process with service times that follow an exponential
 distribution, all handled by a single server. Despite its simplicity, the model can capture
-trends and predict behaviors such as stability, queue buildup, and performance spikes. 
+trends and predict behaviors such as stability, queue buildup, and performance spikes.
 \cite{b2}.
 
-The M/M/1 queue can be naturally represented as a Markov Chain, where each state corresponds 
-to the current number of jobs in the system. Transitions between states reflect arrivals and 
-completions of jobs, producing a stochastic matrix representing the dynamic behavior of 
-the queue. The steady-state distribution corresponds to the eigenvector 
-associated with eigenvalue 1, consistent with standard results in Markov Chain theory \cite{b3}. 
-This connection between queueing systems and linear algebra provides a powerful framework for 
+The M/M/1 queue can be naturally represented as a Markov Chain, where each state corresponds
+to the current number of jobs in the system. Transitions between states reflect arrivals and
+completions of jobs, producing a stochastic matrix representing the dynamic behavior of
+the queue. The steady-state distribution corresponds to the eigenvector
+associated with eigenvalue 1, consistent with standard results in Markov Chain theory \cite{b3}.
+This connection between queueing systems and linear algebra provides a powerful framework for
 analyzing server load and predicting performance under varying traffic conditions.
 
-In this paper, we examine the steady-state behavior of the M/M/1 queue using Markov Chains 
-and eigenvalue analysis. We first derive the transition matrix of the system and compute 
-its stationary distribution using the eigenvector method. We then compare this theoretical 
-distribution with the known closed-form solution of the M/M/1 queue. To validate the  
-results, a queue simulation is implemented in C++, allowing us to observe empirical queue 
-behavior under different arrival and service rates. By comparing theoretical predictions with 
-simulation outcomes, we illustrate how mathematical modeling can determine whether a server 
+In this paper, we examine the steady-state behavior of the M/M/1 queue using Markov Chains
+and eigenvalue analysis. We first derive the transition matrix of the system and compute
+its stationary distribution using the eigenvector method. We then compare this theoretical
+distribution with the known closed-form solution of the M/M/1 queue. To validate the
+results, a queue simulation is implemented in C++, allowing us to observe empirical queue
+behavior under different arrival and service rates. By comparing theoretical predictions with
+simulation outcomes, we illustrate how mathematical modeling can determine whether a server
 can withstand a particular load and how queue lengths evolve over time.
 
 \section{Theoretical Foundation}
@@ -89,11 +89,11 @@ can withstand a particular load and how queue lengths evolve over time.
 \subsection{Matrices}
 A matrix is a rectangular array of numbers, symbols, or expressions, arranged in rows and columns.
 The individual items in a matrix are called its elements or entries. The size of a matrix is described
-in terms of the number of rows and columns it contains. Generally, a general $m \times n$ matrix 
+in terms of the number of rows and columns it contains. Generally, a general $m \times n$ matrix
 may be denoted as:
 
 \[
-A = 
+A =
 \begin{bmatrix}
 a_{11} & a_{12} & \cdots & a_{1n} \\
 a_{21} & a_{22} & \cdots & a_{2n} \\
@@ -108,7 +108,7 @@ the elements $a_{ii}$ (where the row and column indices are equal) form the main
 of matrix A.
 
 \subsubsection{Row and Column Vectors}
-A matrix with only one row or one column is called a row matrix (or a row vector) or column matrix 
+A matrix with only one row or one column is called a row matrix (or a row vector) or column matrix
 (or a column vector), respectively. A general $m \times 1$ column matrix and a $1 \times n$ row matrix b may be denoted as:
 
 \begin{center}
@@ -116,16 +116,16 @@ A matrix with only one row or one column is called a row matrix (or a row vector
 \end{center}
 
 \subsubsection{Matrix Addition and Subtraction}
-If A and B are matrices of the same size, their sum (A + B) and difference (A - B) are obtained by adding or 
+If A and B are matrices of the same size, their sum (A + B) and difference (A - B) are obtained by adding or
 subtracting their corresponding entries. Matrices of different sizes cannot be added or subtracted. In matrix notation,
-if $A = [a_{ij}]$ and $B = [b_{ij}]$ have the same size, then $(A \pm B)_{ij} = a_{ij} \pm b_{ij}$. 
+if $A = [a_{ij}]$ and $B = [b_{ij}]$ have the same size, then $(A \pm B)_{ij} = a_{ij} \pm b_{ij}$.
 
 \subsubsection{Scalar Multiplication}
 If A is any matrix and k is any scalar, then the scalar multiple kA is the matrix obtained by multiplying every entry of A by k.
 In matrix notation, if $A = [a_{ij}]$, then $(kA)_{ij} = k a_{ij}$.
 
 \begin{center}
-$A = \begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \end{bmatrix} \rightarrow 2A = \begin{bmatrix} 2 & 4 & 6 \\ 8 & 10 & 12 \end{bmatrix}$    
+$A = \begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \end{bmatrix} \rightarrow 2A = \begin{bmatrix} 2 & 4 & 6 \\ 8 & 10 & 12 \end{bmatrix}$
 \end{center}
 
 \subsubsection{Matrix Multiplication}
@@ -133,7 +133,7 @@ If A is an $m \times n$ matrix and B is an $n \times p$ matrix, then the product
 whose entries are given by:
 \[c_{ij} = \sum_{k=1}^{n} a_{ik} b_{kj}\]
 
-In simpler terms, to find entry $c_{ij}$ of the product matrix C, multiply the corresponding entries of the $i^{th}$ row of 
+In simpler terms, to find entry $c_{ij}$ of the product matrix C, multiply the corresponding entries of the $i^{th}$ row of
 matrix A with the $j^{th}$ column of matrix B and add the results. Given the example below:
 
 \begin{center}
@@ -145,11 +145,11 @@ $C = AB = \begin{bmatrix} 25 & 7 \\ 22 & 15 \end{bmatrix}$
 \end{center}
 
 Since A is a $2 \times 3$ matrix and B is a $3 \times 2$ matrix, the resulting product AB is a $2 \times 2$ matrix. For example,
-to determine entry $c_{11}$ of the product matrix AB, we multiply the corresponding entries of the first row of matrix A 
+to determine entry $c_{11}$ of the product matrix AB, we multiply the corresponding entries of the first row of matrix A
 with the first column of matrix B and add the results.
 
 \subsubsection{Transpose of a Matrix}
-Given a matrix $A$ of size $m \times n$, the transpose of $A$, denoted by $A^T$, is the $n \times m$ matrix obtained 
+Given a matrix $A$ of size $m \times n$, the transpose of $A$, denoted by $A^T$, is the $n \times m$ matrix obtained
 by interchanging the rows and columns of A. In matrix notation, if $B = A^T$, then the entries of B are defined as
 $b_{ij} = a_{ji}$, $1 \leq i \leq n$, $1 \leq j \leq m$.
 \begin{center}
@@ -158,17 +158,17 @@ $A = \begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \end{bmatrix} \rightarrow A^T = \beg
 
 \subsection{Eigenvalues and Eigenvectors}
 
-If A is an $n \times n$ matrix, then a nonzero vector $\textbf{v}$ in $R^n$ is called an eigenvector of A if there exists a scalar 
+If A is an $n \times n$ matrix, then a nonzero vector $\textbf{v}$ in $R^n$ is called an eigenvector of A if there exists a scalar
 $\lambda$ such that:
 
 \begin{center}
 $A \textbf{v} = \lambda \textbf{v}$
 \end{center}
 
-The scalar $\lambda$ is called the eigenvalue of A corresponding to the eigenvector $\textbf{v}$. In other words, multiplying 
+The scalar $\lambda$ is called the eigenvalue of A corresponding to the eigenvector $\textbf{v}$. In other words, multiplying
 the matrix A by the vector $\textbf{v}$ results in a new vector that is a scalar multiple of the original vector $\textbf{v}$.
 
-Given a matrix A with size $n \times n$, the eigenvalues and eigenvectors are found by solving the 
+Given a matrix A with size $n \times n$, the eigenvalues and eigenvectors are found by solving the
 following characteristic equation:
 \begin{center}
 $Ax = \lambda x$ \\
@@ -177,7 +177,7 @@ $Ax = \lambda Ix$ \\
 $(A - \lambda I)x = 0$ \\
 \end{center}
 
-Since $x = 0$ is the only trivial solution, for $(A - \lambda I)x = 0$ to have non-trivial solutions, 
+Since $x = 0$ is the only trivial solution, for $(A - \lambda I)x = 0$ to have non-trivial solutions,
 the matrix $(A - \lambda I)$ must be singular, and therefore $det(A - \lambda I)$ must be zero.
 The polynomial given by $det(A - \lambda I) = 0$ is called the characteristic equation of A, and the solutions
 to such equation are the eigenvalues of A, otherwise denoted as the characteristic roots.
@@ -243,14 +243,14 @@ distributed ($M$), and the system consists of a single server ($1$).
 Let $\lambda$ denote the average arrival rate and $\mu$ the average service
 rate. At any time, the state of the system is defined as the number of jobs
 currently present in the system, including the job being served. Thus, the
-system is considered stable if $\lambda < \mu$ and if otherwise, the queue 
+system is considered stable if $\lambda < \mu$ and if otherwise, the queue
 will grow indefintely long over time.
 
 Expanding over such, the utilization of the queue's buffer can be written as
 $\rho = \frac{\lambda}{\mu}$ and for it to be stable, it must hold that
 $\rho < 1$. The steady-state probability of having $n$ jobs
 in the system is given by:
-\[P_n = (1 - \rho) \rho^n, \quad n = 0, 1, 2, \ldots\]  
+\[P_n = (1 - \rho) \rho^n, \quad n = 0, 1, 2, \ldots\]
 where $P_n$ represents the probability of having $n$ jobs in the system at
 steady state \cite{b2}.
 
@@ -329,42 +329,42 @@ the long-term behavior of the system, reflecting the instability of the queue.
 
 \section{Results and Discussion}
 
-Figure Labels: Use 8 point Times New Roman for Figure labels. Use words 
-rather than symbols or abbreviations when writing Figure axis labels to 
-avoid confusing the reader. As an example, write the quantity 
-``Magnetization'', or ``Magnetization, M'', not just ``M''. If including 
-units in the label, present them within parentheses. Do not label axes only 
-with units. In the example, write ``Magnetization (A/m)'' or ``Magnetization 
-\{A[m(1)]\}'', not just ``A/m''. Do not label axes with a ratio of 
-quantities and units. For example, write ``Temperature (K)'', not 
+Figure Labels: Use 8 point Times New Roman for Figure labels. Use words
+rather than symbols or abbreviations when writing Figure axis labels to
+avoid confusing the reader. As an example, write the quantity
+``Magnetization'', or ``Magnetization, M'', not just ``M''. If including
+units in the label, present them within parentheses. Do not label axes only
+with units. In the example, write ``Magnetization (A/m)'' or ``Magnetization
+\{A[m(1)]\}'', not just ``A/m''. Do not label axes with a ratio of
+quantities and units. For example, write ``Temperature (K)'', not
 ``Temperature/K''.
 
 \section*{Acknowledgment}
 
-The preferred spelling of the word ``acknowledgment'' in America is without 
-an ``e'' after the ``g''. Avoid the stilted expression ``one of us (R. B. 
-G.) thanks $\ldots$''. Instead, try ``R. B. G. thanks$\ldots$''. Put sponsor 
+The preferred spelling of the word ``acknowledgment'' in America is without
+an ``e'' after the ``g''. Avoid the stilted expression ``one of us (R. B.
+G.) thanks $\ldots$''. Instead, try ``R. B. G. thanks$\ldots$''. Put sponsor
 acknowledgments in the unnumbered footnote on the first page.
 
 \section*{References}
 
-Please number citations consecutively within brackets \cite{b1}. The 
-sentence punctuation follows the bracket \cite{b2}. Refer simply to the reference 
-number, as in \cite{b3}---do not use ``Ref. \cite{b3}'' or ``reference \cite{b3}'' except at 
+Please number citations consecutively within brackets \cite{b1}. The
+sentence punctuation follows the bracket \cite{b2}. Refer simply to the reference
+number, as in \cite{b3}---do not use ``Ref. \cite{b3}'' or ``reference \cite{b3}'' except at
 the beginning of a sentence: ``Reference \cite{b3} was the first $\ldots$''
 
-Number footnotes separately in superscripts. Place the actual footnote at 
-the bottom of the column in which it was cited. Do not put footnotes in the 
+Number footnotes separately in superscripts. Place the actual footnote at
+the bottom of the column in which it was cited. Do not put footnotes in the
 abstract or reference list. Use letters for table footnotes.
 
-Unless there are six authors or more give all authors' names; do not use 
-``et al.''. Papers that have not been published, even if they have been 
-submitted for publication, should be cited as ``unpublished'' \cite{b4}. Papers 
-that have been accepted for publication should be cited as ``in press'' \cite{b5}. 
-Capitalize only the first word in a paper title, except for proper nouns and 
+Unless there are six authors or more give all authors' names; do not use
+``et al.''. Papers that have not been published, even if they have been
+submitted for publication, should be cited as ``unpublished'' \cite{b4}. Papers
+that have been accepted for publication should be cited as ``in press'' \cite{b5}.
+Capitalize only the first word in a paper title, except for proper nouns and
 element symbols.
 
-For papers published in translation journals, please give the English 
+For papers published in translation journals, please give the English
 citation first, followed by the original foreign-language citation \cite{b6}.
 
 \begin{thebibliography}{00}

@@ -1,7 +1,7 @@
 #ifndef EVENT_H
 #define EVENT_H
 
-enum EventType {ARRIVAL, DEPARTURE};
+enum EventType { ARRIVAL, DEPARTURE };
 
 struct Event {
   double time;
@@ -11,6 +11,5 @@ struct Event {
     return time > other.time;
   }
 };
-
 
 #endif
