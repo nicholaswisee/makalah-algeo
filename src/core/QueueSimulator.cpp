@@ -111,6 +111,14 @@ double QueueSimulator::getAverageQueueLength() const {
     return avgLength;
 }
 
+double QueueSimulator::getTheoreticalAverageQueueLength() const {
+    if (rho >= 1.0) {
+        return std::numeric_limits<double>::infinity();
+    }
+    return rho / (1 - rho);
+}
+
+
 void QueueSimulator::printSummary() const {
     std::cout << "\n=== M/M/1 Queue Simulation Results ===" << std::endl;
     std::cout << std::fixed << std::setprecision(6);

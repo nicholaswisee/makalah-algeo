@@ -6,3 +6,5 @@
 *.synctex.gz
 *.out
 main copy.*
+bin/
+build/
