@@ -3,28 +3,31 @@
 
 #include <vector>
 
-class MarkovChainAnalyzer {
+class MarkovChainAnalysis {
    private:
     int numStates;
     double lambda;
-    double mu;
-    std::vector<std::vector<double>> transitionMatrix;
+    double miu;
+    std::vector<std::vector<double>> generatorMatrix;  // Q-matrix for CTMC
 
-    // Build the transition matrix for M/M/1 queue
-    void buildTransitionMatrix();
+    // Build the generator matrix (Q-matrix) for M/M/1 queue CTMC
+    void buildGeneratorMatrix();
 
    public:
     // constructor
-    MarkovChainAnalyzer(int states, double arrivalRate, double serviceRate);
+    MarkovChainAnalysis(int states, double arrivalRate, double serviceRate);
 
-    // Steady-state distribution using power iteration
-    std::vector<double> computeSteadyState(int maxIterations = 10000, double tolerance = 1e-10);
+    // Steady-state distribution by solving πQ = 0
+    std::vector<double> computeSteadyState(double tolerance = 1e-10);
 
-    void printTransitionMatrix() const;
+    // Get theoretical steady-state (closed-form for M/M/1)
+    std::vector<double> getTheoreticalSteadyState() const;
+
+    void printGeneratorMatrix() const;
 
     // Getters
-    const std::vector<std::vector<double>>& getTransitionMatrix() const {
-        return transitionMatrix;
+    const std::vector<std::vector<double>>& getGeneratorMatrix() const {
+        return generatorMatrix;
     }
 };
 

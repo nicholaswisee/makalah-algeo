@@ -39,6 +39,7 @@ void QueueSimulator::simulate(double duration) {
             int state = std::min(currentQueueLength, maxStateTracked);
             timeInState[state] += (duration - currentTime);
             currentTime = duration;
+            break;
         }
 
         int state = std::min(currentQueueLength, maxStateTracked);

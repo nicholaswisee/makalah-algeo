@@ -48,6 +48,25 @@ ExperimentResult ExperimentRunner::runSingleExperiment(double lambda) {
     return result;
 }
 
+void ExperimentRunner::exportResults(const std::string& filename) const {
+    std::ofstream file(filename);
+
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open file " << filename << std::endl;
+        return;
+    }
+
+    file << "Lambda,Rho,Avg_Queue_Length_Sim,Avg_Queue_Length_Theory,Relative_Error\n";
+
+    for (const auto& result : results) {
+        file << result.lambda << "," << result.rho << "," << result.avgQueueLengthSim << ","
+             << result.avgQueueLengthTheory << "," << result.relativeError << "\n";
+    }
+
+    file.close();
+    std::cout << "\nExperiment results exported to " << filename << std::endl;
+}
+
 void ExperimentRunner::printResults() const {
     std::cout << "\n=== Experiment Results Summary ===" << std::endl;
     std::cout << std::fixed << std::setprecision(4);

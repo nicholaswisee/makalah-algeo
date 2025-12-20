@@ -11,12 +11,14 @@ TARGET = $(BIN_DIR)/queue_simulator
 # Source files
 SOURCES = main.cpp \
           core/QueueSimulator.cpp \
-					core/MarkovChainAnalysis.cpp
+					core/MarkovChainAnalysis.cpp \
+					core/ExperimentRunner.cpp \
 
 # Header files
 HEADERS = header/Event.hpp \
           header/QueueSimulator.hpp \
-					header/MarkovChainAnalysis.hpp
+					header/MarkovChainAnalysis.hpp \
+					header/ExperimentRunner.hpp \
 
 OBJECTS = $(SOURCES:%.cpp=$(BUILD_DIR)/%.o)
 
