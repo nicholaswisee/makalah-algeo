@@ -1,8 +1,8 @@
 ---
 Language: Cpp
 BasedOnStyle: Google
-IndentWidth: 2
-TabWidth: 2
+IndentWidth: 4
+TabWidth: 4
 UseTab: Never
 ColumnLimit: 100
 PointerAlignment: Left
