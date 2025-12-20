@@ -123,6 +123,27 @@ double QueueSimulator::getTheoreticalAverageQueueLength() const {
     return rho / (1 - rho);
 }
 
+void QueueSimulator::exportToCSV(const std::string& filename) const {
+    std::ofstream file(filename);
+
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open file " << filename << std::endl;
+        return;
+    }
+
+    file << "State,Simulated_Probability,Theoretical_Probability,Time_in_State\n";
+
+    auto simProbs = getSteadyStateProbabilities();
+    auto theoProbs = getTheoreticalProbabilities();
+
+    for (int i = 0; i <= maxStateTracked; ++i) {
+        file << i << "," << simProbs[i] << "," << theoProbs[i] << "," << timeInState[i] << "\n";
+    }
+
+    file.close();
+    std::cout << "Results exported to " << filename << std::endl;
+}
+
 void QueueSimulator::printSummary() const {
     std::cout << "\n=== M/M/1 Queue Simulation Results ===" << std::endl;
     std::cout << std::fixed << std::setprecision(6);
