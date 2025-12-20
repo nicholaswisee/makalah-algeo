@@ -303,12 +303,26 @@ meaning that $x$ is an eigenvector of the transition matrix $P$ corresponding
 to the eigenvalue $\lambda = 1$ \cite{b4}. Since $P$ is a stochastic matrix,
 the existence of such an eigenvalue is guaranteed.
 
+Intuitively, multiplying a probability vector by the transition matrix $P$
+corresponds to advancing the system by one time step. If repeated applications
+of $P$ leave a particular probability vector unchanged, then the system has
+reached a statistical equilibrium in which the distribution of queue lengths
+remains constant over time. The eigenvalue $\lambda = 1$ therefore represents
+a mode of the system that neither grows nor decays, corresponding to persistent
+long-term behavior.
+
 For the M/M/1 queue, the existence of a valid steady-state eigenvector depends
 on the relationship between the arrival rate $\lambda$ and the service rate
-$\mu$. When $\lambda < \mu$, the system is stable and the eigenvector associated
-with $\lambda = 1$ represents the long-term probabilities of observing each
-queue length. This provides a direct linear algebraic criterion for evaluating
-whether a server can sustain a given workload.
+$\mu$. When $\lambda < \mu$, the system is stable and the influence of all other
+eigenmodes (with $|\lambda_i| < 1$) decays over time, causing the system state
+to converge to the eigenvector associated with $\lambda = 1$. This eigenvector
+represents the long-term probabilities of observing each queue length.
+
+Conversely, when $\lambda \ge \mu$, the queue grows without bound and the system
+fails to converge to a finite steady-state distribution. In this case, no
+normalizable eigenvector associated with $\lambda = 1$ exists that can describe
+the long-term behavior of the system, reflecting the instability of the queue.
+
 
 \subsection{C++ Queue Simulation}
 
