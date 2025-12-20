@@ -67,22 +67,20 @@ distribution, all handled by a single server. Despite its simplicity, the model 
 trends and predict behaviors such as stability, queue buildup, and performance spikes.
 \cite{b2}.
 
-The M/M/1 queue can be naturally represented as a Markov Chain, where each state corresponds
-to the current number of jobs in the system. Transitions between states reflect arrivals and
-completions of jobs, producing a stochastic matrix representing the dynamic behavior of
-the queue. The steady-state distribution corresponds to the eigenvector
-associated with eigenvalue 1, consistent with standard results in Markov Chain theory \cite{b3}.
-This connection between queueing systems and linear algebra provides a powerful framework for
-analyzing server load and predicting performance under varying traffic conditions.
+The M/M/1 queue can be naturally represented as a Markov process, where each
+state corresponds to the number of jobs in the system. Due to the continuous
+nature of arrival and service events, the M/M/1 model is more accurately
+described as a continuous-time Markov chain (CTMC). In this framework, the
+system dynamics are governed by transition rates rather than discrete-time
+probabilities.
 
-In this paper, we examine the steady-state behavior of the M/M/1 queue using Markov Chains
-and eigenvalue analysis. We first derive the transition matrix of the system and compute
-its stationary distribution using the eigenvector method. We then compare this theoretical
-distribution with the known closed-form solution of the M/M/1 queue. To validate the
-results, a queue simulation is implemented in C++, allowing us to observe empirical queue
-behavior under different arrival and service rates. By comparing theoretical predictions with
-simulation outcomes, we illustrate how mathematical modeling can determine whether a server
-can withstand a particular load and how queue lengths evolve over time.
+While steady-state behavior in discrete-time Markov chains is commonly
+characterized by eigenvectors associated with eigenvalue 1 of a stochastic
+transition matrix, continuous-time systems require a different formulation.
+In particular, the steady-state distribution of a CTMC is obtained by solving
+a system of linear balance equations derived from the generator matrix of the
+process. This distinction plays a critical role in correctly analyzing the
+long-term behavior of queueing systems.
 
 \section{Theoretical Foundation}
 
@@ -261,67 +259,86 @@ steady state \cite{b2}.
 \end{figure}
 
 \subsection{Markov Chain Representation}
-Building on the Markov Chain framework introduced in the theoretical foundation,
-the M/M/1 queue can be modeled as a discrete-state system in which each state
-represents the number of jobs currently present in the system. Let state $n$
-denote the condition where $n \geq 0$ jobs are either waiting or being served.
+The M/M/1 queue is modeled as a continuous-time Markov chain (CTMC) with a
+countably infinite state space, where each state $n \geq 0$ represents the
+number of jobs currently present in the system. Transitions between states
+occur due to two independent stochastic events: arrivals and service
+completions.
 
-Transitions between states occur due to two possible events: the arrival of a
-new job or the completion of a service. An arrival causes the system to move
-from state $n$ to $n+1$, while a service completion causes a transition from
-state $n$ to $n-1$ when $n > 0$. These transitions form a birth--death process,
-a special class of Markov Chains commonly used to model queueing systems.
+An arrival causes the system to transition from state $n$ to $n+1$ at rate
+$\lambda$, while a service completion causes a transition from state $n$ to
+$n-1$ at rate $\mu$ for $n > 0$. This structure defines a birth--death process,
+a special class of CTMCs commonly used to model queueing systems.
 
-To enable matrix-based analysis, the infinite state space is truncated to a
-finite number of states $\{0,1,\dots,N\}$. This results in a finite stochastic
-transition matrix $P$ whose structure directly reflects the arrival rate
-$\lambda$ and service rate $\mu$. The evolution of the queue state distribution
-can therefore be analyzed using the matrix formulation established earlier
-\cite{b4}.
+The dynamics of a CTMC are characterized by an infinitesimal generator matrix
+$Q$, whose off-diagonal entries represent transition rates between states and
+whose diagonal entries ensure that each row sums to zero. For the M/M/1 queue,
+the generator matrix has the form
+\[
+Q =
+\begin{bmatrix}
+-\lambda & \lambda & 0 & 0 & \cdots \\
+\mu & -(\lambda + \mu) & \lambda & 0 & \cdots \\
+0 & \mu & -(\lambda + \mu) & \lambda & \cdots \\
+\vdots & & & &
+\end{bmatrix}.
+\]
 
+For computational purposes, the infinite state space is truncated to a finite
+set $\{0,1,\dots,N\}$. This approximation allows matrix-based analysis while
+preserving the essential structure of the queueing process.
 \begin{figure}[htbp]
 \centerline{\includegraphics[width=\columnwidth]{markov-queue.png}}
 \caption{A Markov Chain representation of a queue \cite{b9}.}
 \label{fig:markov-queue}
 \end{figure}
 
-
-
-\subsection{Steady-State Analysis via Eigenvalues and Eigenvectors}
+\subsection{Steady-State Analysis via Eigenvalues and Linear Systems}
 
 The primary objective of the Markov Chain representation is to determine the
-long-term behavior of the queue. In steady-state operation, the distribution
-of queue lengths no longer changes over time, indicating that the system has
-reached equilibrium.
+long-term behavior of the queue. In steady-state operation, the probability
+distribution of queue lengths no longer changes over time, indicating that
+the system has reached statistical equilibrium.
 
-From a linear algebra perspective, a steady-state distribution is a probability
-vector $x$ that satisfies
+For discrete-time Markov chains, a steady-state distribution is commonly
+defined as a probability vector $x$ satisfying
 \[
 P x = x,
 \]
-meaning that $x$ is an eigenvector of the transition matrix $P$ corresponding
-to the eigenvalue $\lambda = 1$ \cite{b4}. Since $P$ is a stochastic matrix,
-the existence of such an eigenvalue is guaranteed.
+corresponding to an eigenvector of the transition matrix associated with the
+eigenvalue $\lambda = 1$. Intuitively, this condition indicates that repeated
+applications of the transition matrix leave the distribution unchanged, so
+the system neither grows nor decays over time.
 
-Intuitively, multiplying a probability vector by the transition matrix $P$
-corresponds to advancing the system by one time step. If repeated applications
-of $P$ leave a particular probability vector unchanged, then the system has
-reached a statistical equilibrium in which the distribution of queue lengths
-remains constant over time. The eigenvalue $\lambda = 1$ therefore represents
-a mode of the system that neither grows nor decays, corresponding to persistent
-long-term behavior.
+However, the M/M/1 queue is inherently a continuous-time Markov chain. In this
+setting, steady-state behavior is governed not by a stochastic transition
+matrix, but by the infinitesimal generator matrix $Q$. The steady-state
+distribution $\pi$ is therefore defined as the solution to the global balance
+equations
+\[
+\pi Q = 0, \quad \sum_{n=0}^{\infty} \pi_n = 1.
+\]
 
-For the M/M/1 queue, the existence of a valid steady-state eigenvector depends
-on the relationship between the arrival rate $\lambda$ and the service rate
-$\mu$. When $\lambda < \mu$, the system is stable and the influence of all other
-eigenmodes (with $|\lambda_i| < 1$) decays over time, causing the system state
-to converge to the eigenvector associated with $\lambda = 1$. This eigenvector
-represents the long-term probabilities of observing each queue length.
+From a linear algebra perspective, this formulation corresponds to finding a
+normalized vector in the left nullspace of the generator matrix. The condition
+$\pi Q = 0$ ensures that, for each state, the total rate of probability flow
+into the state equals the total rate of probability flow out, resulting in a
+time-invariant distribution.
 
-Conversely, when $\lambda \ge \mu$, the queue grows without bound and the system
-fails to converge to a finite steady-state distribution. In this case, no
-normalizable eigenvector associated with $\lambda = 1$ exists that can describe
-the long-term behavior of the system, reflecting the instability of the queue.
+For the M/M/1 queue, these balance equations admit a valid solution only when
+the arrival rate satisfies $\lambda < \mu$. In this stable regime, the steady-
+state distribution is given by
+\[
+\pi_n = (1 - \rho)\rho^n, \quad \rho = \frac{\lambda}{\mu}.
+\]
+When $\lambda \ge \mu$, no normalizable solution exists, reflecting the fact
+that the queue grows without bound and the system fails to reach equilibrium.
+
+Although eigenvalue analysis provides useful intuition for understanding
+stability in discrete-time systems, direct application of eigenvector methods
+to discretized approximations of continuous-time queues may yield inaccurate
+results. This distinction highlights the importance of selecting an analytical
+framework consistent with the underlying stochastic process.
 
 
 \subsection{C++ Queue Simulation}
