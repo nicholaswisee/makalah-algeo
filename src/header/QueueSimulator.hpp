@@ -10,16 +10,15 @@
 
 class QueueSimulator {
    private:
-    double lambda;  // Arrival rate
-    double mu;      // Service rate
-    double rho;     // lambda/miu
+    double lambda;
+    double mu;
+    double rho;
 
-    // Simulation state
     double currentTime;
     int currentQueueLength;
     double totalSimulationTime;
     int maxStateTracked;
-    std::vector<double> timeInState;  // Time spent in each state
+    std::vector<double> timeInState;
 
     std::priority_queue<Event, std::vector<Event>, std::greater<Event>> eventQueue;
 
@@ -32,13 +31,11 @@ class QueueSimulator {
     void handleDeparture();
 
    public:
-    // constructor
     QueueSimulator(double arrivalRate, double serviceRate, int maxStates = 100,
                    unsigned int seed = 42);
 
     void simulate(double duration);
 
-    // results
     std::vector<double> getSteadyStateProbabilities() const;
     std::vector<double> getTheoreticalProbabilities() const;
     double getAverageQueueLength() const;

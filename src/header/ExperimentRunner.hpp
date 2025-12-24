@@ -22,18 +22,15 @@ class ExperimentRunner {
     std::vector<ExperimentResult> results;
 
    public:
-    // Constructor
     ExperimentRunner(double serviceRate, int maxStates, double simTime, unsigned int seed);
 
     void runVaryingLambdaExperiments();
 
     ExperimentResult runSingleExperiment(double lambda);
 
-    // Output results
     void exportResults(const std::string& filename) const;
     void printResults() const;
 
-    // Getters
     const std::vector<ExperimentResult>& getResults() const {
         return results;
     }

@@ -49,7 +49,7 @@ clean-obj:
 
 # Clean only CSV output files
 clean-output:
-	rm -f *.csv
+	rm -f data/*.csv
 	@echo "Cleaned output CSV files"
 
 # Clean build artifacts and output files

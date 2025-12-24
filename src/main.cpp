@@ -1,3 +1,5 @@
+#include <cmath>
+#include <filesystem>
 #include <iomanip>
 #include <iostream>
 #include <string>
@@ -5,6 +7,113 @@
 #include "ExperimentRunner.hpp"
 #include "MarkovChainAnalysis.hpp"
 #include "QueueSimulator.hpp"
+
+const double RELATIVE_ERROR_TOLERANCE = 0.05;
+const double ABSOLUTE_ERROR_TOLERANCE = 0.01;
+
+struct ValidationResult {
+    std::string testName;
+    double expected;
+    double actual;
+    double relativeError;
+    bool passed;
+};
+
+double relativeError(double expected, double actual) {
+    if (std::abs(expected) < 1e-10)
+        return std::abs(actual - expected);
+    return std::abs((actual - expected) / expected);
+}
+
+void printValidationResult(const ValidationResult& result) {
+    std::cout << std::setw(40) << std::left << result.testName << " | " << std::setw(12)
+              << std::fixed << std::setprecision(6) << result.expected << " | " << std::setw(12)
+              << result.actual << " | " << std::setw(10) << std::setprecision(4)
+              << (result.relativeError * 100) << "% | " << (result.passed ? "✓ PASS" : "✗ FAIL")
+              << std::endl;
+}
+
+ValidationResult validateValue(const std::string& name, double expected, double actual) {
+    ValidationResult result;
+    result.testName = name;
+    result.expected = expected;
+    result.actual = actual;
+
+    if (std::abs(expected) < 1e-10) {
+        result.relativeError = std::abs(actual - expected);
+        result.passed = result.relativeError < ABSOLUTE_ERROR_TOLERANCE;
+    } else {
+        result.relativeError = std::abs((actual - expected) / expected);
+        result.passed = result.relativeError < RELATIVE_ERROR_TOLERANCE;
+    }
+    return result;
+}
+
+void runStableSystemAnalysis(double lambda, double mu, double simTime, int maxStates,
+                             unsigned int seed) {
+    double rho = lambda / mu;
+
+    std::cout << "\n[Stable M/M/1 Simulation]\n";
+    std::cout << "λ=" << lambda << ", μ=" << mu << ", ρ=" << rho << ", T=" << simTime << "\n";
+
+    QueueSimulator sim(lambda, mu, maxStates, seed);
+    sim.simulate(simTime);
+
+    double simL = sim.getAverageQueueLength();
+    double theoryL = rho / (1.0 - rho);
+
+    std::cout << "Average queue length:\n";
+    std::cout << "  Simulation : " << simL << "\n";
+    std::cout << "  Theory     : " << theoryL << "\n";
+    std::cout << "  Rel. Error : " << relativeError(theoryL, simL) * 100 << "%\n";
+
+    auto simProbs = sim.getSteadyStateProbabilities();
+    auto theoProbs = sim.getTheoreticalProbabilities();
+
+    std::cout << "\nFirst 5 state probabilities:\n";
+    std::cout << "n   Simulated    Theoretical\n";
+    for (int i = 0; i < 5; ++i) {
+        std::cout << i << "   " << simProbs[i] << "   " << theoProbs[i] << "\n";
+    }
+
+    sim.exportToCSV("data/mm1_stable_results.csv");
+}
+
+void runUnstableSystemAnalysis(double lambda, double mu, double simTime, int maxStates,
+                               unsigned int seed) {
+    double rho = lambda / mu;
+
+    std::cout << "\n[Unstable M/M/1 Simulation]\n";
+    std::cout << "λ=" << lambda << ", μ=" << mu << ", ρ=" << rho << ", T=" << simTime << "\n";
+
+    QueueSimulator sim(lambda, mu, maxStates, seed);
+    sim.simulate(std::min(simTime, 10000.0));
+
+    std::cout << "Average queue length (finite horizon): " << sim.getAverageQueueLength() << "\n";
+
+    sim.exportToCSV("data/mm1_unstable_results.csv");
+}
+
+void runSystemComparison(double mu, double simTime, int maxStates, unsigned int seed) {
+    std::vector<double> rhos = {0.5, 0.7, 0.9, 1.0, 1.1};
+
+    std::cout << "\n[Stability Comparison]\n";
+    std::cout << "ρ    Simulated L    Theoretical L\n";
+
+    for (double rho : rhos) {
+        double lambda = rho * mu;
+
+        QueueSimulator sim(lambda, mu, maxStates, seed);
+        sim.simulate((rho < 1.0) ? simTime : 5000.0);
+
+        std::cout << rho << "    " << sim.getAverageQueueLength() << "    ";
+
+        if (rho < 1.0)
+            std::cout << rho / (1.0 - rho) << "\n";
+        else
+            std::cout << "N/A\n";
+    }
+}
 
 void printUsage(const char* programName) {
     std::cout << "\nUsage: " << programName << " [lambda] [mu] [sim_time] [max_states] [seed]\n"
@@ -19,72 +128,34 @@ void printUsage(const char* programName) {
 }
 
 int main(int argc, char* argv[]) {
-    // Default parameters
     double lambda = 0.8;
     double mu = 1.0;
     double simTime = 100000.0;
     int maxStates = 50;
     unsigned int seed = 42;
 
-    // Parse command-line arguments
     if (argc > 1)
         lambda = std::stod(argv[1]);
     if (argc > 2)
         mu = std::stod(argv[2]);
     if (argc > 3)
         simTime = std::stod(argv[3]);
-    if (argc > 4)
-        maxStates = std::stoi(argv[4]);
-    if (argc > 5)
-        seed = std::stoi(argv[5]);
 
-    std::cout << "=== M/M/1 Queue Analysis System ===" << std::endl;
-    std::cout << "Parameters: λ=" << lambda << ", μ=" << mu << ", simulation_time=" << simTime
-              << std::endl;
+    // Create data directory for CSV output
+    std::filesystem::create_directories("data");
 
-    // Run discrete-event simulation
-    std::cout << "\n[1] Running discrete-event simulation..." << std::endl;
-    QueueSimulator simulator(lambda, mu, maxStates, seed);
-    simulator.simulate(simTime);
-    simulator.printSummary();
+    double rho = lambda / mu;
 
-    // Export simulation results
-    simulator.exportToCSV("mm1_simulation_results.csv");
+    if (rho < 1.0)
+        runStableSystemAnalysis(lambda, mu, simTime, maxStates, seed);
+    else
+        runUnstableSystemAnalysis(lambda, mu, simTime, maxStates, seed);
 
-    // Perform Markov Chain CTMC analysis (only for stable systems)
-    if (lambda < mu) {
-        std::cout << "\n[2] Performing Continuous-Time Markov Chain (CTMC) analysis..."
-                  << std::endl;
-        MarkovChainAnalysis analyzer(maxStates, lambda, mu);
+    runSystemComparison(mu, simTime, maxStates, seed);
 
-        // Print generator matrix for verification
-        analyzer.printGeneratorMatrix();
-
-        std::cout << "\nComputing steady-state distribution by solving πQ = 0..." << std::endl;
-        auto ctmcSteadyState = analyzer.computeSteadyState();
-
-        std::cout << "\n--- Comparison: Simulation vs CTMC Generator Matrix Method ---"
-                  << std::endl;
-        std::cout << "State | Simulation | CTMC (πQ=0) | Theoretical" << std::endl;
-        std::cout << "------|------------|-------------|------------" << std::endl;
-
-        auto simProbs = simulator.getSteadyStateProbabilities();
-        auto theoProbs = simulator.getTheoreticalProbabilities();
-
-        for (int i = 0; i < std::min(10, maxStates); ++i) {
-            std::cout << std::setw(5) << i << " | " << std::setw(10) << std::fixed
-                      << std::setprecision(6) << simProbs[i] << " | " << std::setw(11)
-                      << ctmcSteadyState[i] << " | " << std::setw(10) << theoProbs[i] << std::endl;
-        }
-    }
-
-    // Run multiple experiments with varying arrival rates
-    std::cout << "\n[3] Running experiments with varying arrival rates..." << std::endl;
     ExperimentRunner experiments(mu, maxStates, simTime, seed);
     experiments.runVaryingLambdaExperiments();
-    experiments.exportResults("mm1_varying_lambda.csv");
-
-    std::cout << "\n=== Simulation Complete ===" << std::endl;
+    experiments.exportResults("data/mm1_varying_lambda.csv");
 
     return 0;
 }
