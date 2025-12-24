@@ -25,26 +25,26 @@ The M/M/1 queue models a single-server system where:
 
 ```
 makalah-algeo/
-├── docs/                          # LaTeX paper and figures
-│   ├── main.tex                   # Main paper source
-│   ├── main.pdf                   # Compiled paper
-│   └── *.png, *.jpg               # Figures and images
-├── src/                           # C++ simulation source code
-│   ├── main.cpp                   # Main driver program
-│   ├── Makefile                   # Build configuration
-│   ├── core/                      # Core implementation
-│   │   ├── QueueSimulator.cpp     # Discrete-event simulator
-│   │   ├── MarkovChainAnalysis.cpp# CTMC analysis
-│   │   └── ExperimentRunner.cpp   # Experiment automation
-│   ├── header/                    # Header files
+├── docs/                           # LaTeX paper and figures
+│   ├── main.tex                    # Main paper source
+│   ├── main.pdf                    # Compiled paper
+│   └── *.png, *.jpg                # Figures and images
+├── src/                            # C++ simulation source code
+│   ├── main.cpp                    # Main driver program
+│   ├── Makefile                    # Build configuration
+│   ├── core/                       # Core implementation
+│   │   ├── QueueSimulator.cpp      # Discrete-event simulator
+│   │   ├── MarkovChainAnalysis.cpp # CTMC analysis
+│   │   └── ExperimentRunner.cpp    # Experiment automation
+│   ├── header/                     # Header files
 │   │   ├── Event.hpp
 │   │   ├── QueueSimulator.hpp
 │   │   ├── MarkovChainAnalysis.hpp
 │   │   └── ExperimentRunner.hpp
-│   ├── scripts/                   # Python visualization
+│   ├── scripts/                    # Python visualization
 │   │   └── plot_mm1_results.py
-│   ├── data/                      # Simulation output (CSV)
-│   └── plots/                     # Generated plots
+│   ├── data/                       # Simulation output (CSV)
+│   └── plots/                      # Generated plots
 └── README.md
 ```
 
