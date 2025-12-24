@@ -97,7 +97,7 @@ make clean-obj    # Clean only object files
 make clean-output # Clean only CSV output files
 ```
 
-## 📝 Paper
+## Paper
 
 The full research paper is available in `docs/main.pdf`, covering:
 - Theoretical foundations (matrices, eigenvalues, Markov chains)
@@ -106,6 +106,6 @@ The full research paper is available in `docs/main.pdf`, covering:
 - Implementation details
 - Experimental results and discussion
 
-## 👤 Author
+## Author
 
 **Nicholas Wise Saragih Sumbayak** (13524037)
