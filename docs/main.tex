@@ -61,7 +61,7 @@ examined and shown to depend on the relationship between the arrival and
 service rates.
 
 To validate the analytical results, a discrete-event simulation of the M/M/1
-queue is implemented in C++. The simulation estimates steady-state
+queue is implemented. The simulation estimates steady-state
 probabilities and performance metrics, which are then compared with
 theoretical predictions. The results demonstrate strong agreement between
 the analytical model and simulation for stable systems, confirming the
@@ -87,7 +87,7 @@ Modern computing workloads are highly variable and unpredictable.
 Task arrivals do not occur at fixed intervals, and service times fluctuate
 due to user behavior, network delays, resource contention, and software-level
 scheduling. These uncertainties make deterministic approaches nonoptimal.
-However, probabilistic theory enables a method to determine whether a server
+However, probabilistic theory provides methods to determine whether a server
 will remain stable under a particular load, estimate average waiting times,
 and understand how performance degrades as traffic increases.
 
@@ -101,7 +101,7 @@ To formally analyze such behavior, queueing systems are commonly modeled as
 stochastic processes, with one of the simplest and most fundamental being the M/M/1 queue.
 In this model, arrivals follow a Poisson process with service times that follow an exponential
 distribution, all handled by a single server. Despite its simplicity, the model can capture
-trends and predict behaviors such as stability, queue buildup, and performance spikes.
+trends and predict behaviors such as stability, queue buildup, and performance spikes
 \cite{b3}.
 
 The M/M/1 queue can be naturally represented as a Markov process, where each
@@ -215,7 +215,7 @@ $(A - \lambda I)x = 0$ \\
 Since $x = 0$ is the only trivial solution, for $(A - \lambda I)x = 0$ to have non-trivial solutions,
 the matrix $(A - \lambda I)$ must be singular, and therefore $det(A - \lambda I)$ must be zero.
 The polynomial given by $det(A - \lambda I) = 0$ is called the characteristic equation of A, and the solutions
-to such equation are the eigenvalues of A, otherwise denoted as the characteristic roots.
+to such equation are the eigenvalues of A, otherwise denoted as the characteristic roots \cite{b5}.
 
 Geometrically, an eigenvector of a matrix A represents a direction in $R^n$ that is preserved
 under the linear transformation defined by A. While most vectors are both rotated and scaled
@@ -234,7 +234,7 @@ This matrix is called the transition matrix, and the state vectors at successive
 x(n+1) = P x(n),
 \]
 where $x(n)$ is a probability vector describing the state distribution at time $n$, and $P_{ij}$ is the probability
-that the system will be in state $i$ at time $n+1$ given that it was in state $j$ at time $n$ \cite{b4}.
+that the system will be in state $i$ at time $n+1$ given that it was in state $j$ at time $n$ \cite{b5}.
 
 The transition matrix $P$ is a stochastic matrix, meaning that all of its entries are nonnegative and that the sum
 of each column is equal to one. These properties ensure that multiplying a probability vector by $P$ produces
@@ -262,7 +262,7 @@ This corresponds to an eigenvector associated with the eigenvalue $\lambda = 1$.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[width=\columnwidth]{Markov-Chains-in-NLP.png}}
-\caption{Example of a Markov Chain representing weather states \cite{b5}.}
+\caption{Example of a Markov Chain representing weather states \cite{b6}.}
 \label{fig:markov}
 \end{figure}
 
@@ -279,7 +279,7 @@ Let $\lambda$ denote the average arrival rate and $\mu$ the average service
 rate. At any time, the state of the system is defined as the number of jobs
 currently present in the system, including the job being served. Thus, the
 system is considered stable if $\lambda < \mu$ and if otherwise, the queue
-will grow indefintely long over time.
+will grow indefinitely long over time.
 
 Expanding over such, the utilization of the queue's buffer can be written as
 $\rho = \frac{\lambda}{\mu}$ and for it to be stable, it must hold that
@@ -291,7 +291,7 @@ steady state \cite{b3}.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[width=\columnwidth]{Mm1_queue.png}}
-\caption{An M/M/1 queueing node \cite{b6}.}
+\caption{An M/M/1 queueing node \cite{b7}.}
 \label{fig:mm1}
 \end{figure}
 
@@ -307,9 +307,9 @@ $\lambda$, while a service completion causes a transition from state $n$ to
 $n-1$ at rate $\mu$ for $n > 0$. This structure defines a birth--death process,
 a special class of CTMCs commonly used to model queueing systems \cite{b3}.
 
-The dynamic state of a CTMC are characterized by an infinitesimal generator matrix
+The dynamics of a CTMC are characterized by an infinitesimal generator matrix
 $Q$, whose off-diagonal entries represent transition rates between states and
-diagonal entries ensure that each row sums to zero. For the M/M/1 queue,
+whose diagonal entries ensure that each row sums to zero. For the M/M/1 queue,
 the generator matrix has the form:
 \[
 Q =
@@ -326,7 +326,7 @@ set $\{0,1,\dots,N\}$. This approximation allows matrix-based analysis while
 preserving the essential structure of the queueing process.
 \begin{figure}[htbp]
 \centerline{\includegraphics[width=\columnwidth]{markov-queue.png}}
-\caption{A Markov Chain representation of a queue \cite{b7}.}
+\caption{A Markov Chain representation of a queue \cite{b8}.}
 \label{fig:markov-queue}
 \end{figure}
 
@@ -369,7 +369,7 @@ state distribution is given by
 \pi_n = (1 - \rho)\rho^n, \quad \rho = \frac{\lambda}{\mu}.
 \]
 When $\lambda \ge \mu$, no normalizable solution exists, reflecting the fact
-that the queue grows without bound and the system fails to reach equilibrium \cite{b8}.
+that the queue grows without bound and the system fails to reach equilibrium \cite{b9}.
 
 Although eigenvalue analysis provides useful intuition for understanding
 stability in discrete-time systems, direct application of eigenvector methods
@@ -673,6 +673,35 @@ that adopting a CTMC-consistent framework is essential for accurately
 modeling real-world queueing systems.
 
 \section{Conclusion}
+This paper analyzed the steady-state behavior of the M/M/1 queue using
+continuous-time Markov chain (CTMC) theory and linear algebra concepts.
+By formulating the queue as a birth--death process and deriving its
+generator matrix, the steady-state distribution was obtained through
+the balance equations and interpreted as a normalized vector in
+the left null space of the generator matrix. The analytical results were
+validated through a discrete-event simulation implemented in
+\texttt{C++}, which demonstrated strong agreement with theoretical
+predictions for stable systems.
+
+Simulation results confirmed that when the utilization factor satisfies
+$\rho < 1$, both the steady-state probabilities and average queue length
+closely match the closed-form expressions derived from queueing theory.
+As utilization approaches unity, performance degrades rapidly and
+simulation accuracy deteriorates due to the divergence of the theoretical
+mean queue length. When $\rho \geq 1$, the absence of a steady-state
+distribution was clearly observed through unbounded queue growth,
+reinforcing the fundamental stability condition of the M/M/1 model.
+
+Despite its analytical tractability and simplicity, the M/M/1
+queue represents an abstraction of real-world systems that captures
+straightforward behavior changes based on queue utilization and load. The
+assumption of a single server limits its ability to fully capture the
+behavior of modern computing infrastructures, which frequently employ
+multiple parallel servers, load balancing, and heterogeneous service
+rates. Models such as M/M/$c$ queues and networks of queues provide more
+accurate representations of contemporary systems but require more
+complex analytical and numerical techniques.
+
 
 \appendix{}
 GitHub Repository: \url{https://github.com/nicholaswisee/makalah-algeo}
@@ -691,10 +720,13 @@ knowledge bestowed upon the author. The author also wishes to thank
 their colleagues in the Informatics Engineering department for their
 support and collaboration throughout the semester.
 
-Lastly, the upmost gratitude is extended to fellow Istana Dago Townhouse
+Lastly, the utmost gratitude is extended to fellow Istana Dago Townhouse
 Unit 8 frequent-stayers for their companionship and support during the
-course of this research. Their presence has made the author's journey
+course of the semester, including the conception and writing of this
+paper. Their presence has made the author's journey
 throughout the semester much more bearable.
+
+Soli Deo Gloria!
 
 \begin{thebibliography}{00}
 \bibitem{b1} M. Harchol-Balter, \textit{Performance Modeling and Design of Computer Systems: Queueing Theory in Action}. Cambridge, U.K.: Cambridge Univ. Press, 2013.
@@ -703,15 +735,17 @@ throughout the semester much more bearable.
 
 \bibitem{b3} L. Kleinrock, \textit{Queueing Systems, Volume 1: Theory}. New York, NY, USA: Wiley, 1975.
 
-\bibitem{b4} H. Anton and C. Rorres, \textit{Elementary Linear Algebra: Applications Version}, 11th ed. Hoboken, NJ, USA: Wiley, 2013.
+\bibitem{b4} Munir, Rinaldi. "Nilai Eigen dan Vektor Eigen (Bagian 1)", School of Electrical Engineering and Informatics (STEI) ITB, 2025. [Online]. Available: \url{https://informatika.stei.itb.ac.id/~rinaldi.munir/AljabarGeometri/2025-2026/Algeo-19-Nilai-Eigen-dan-Vektor-Eigen-Bagian1-2025.pdf}
 
-\bibitem{b5} "Markov Chains in NLP," GeeksforGeeks. [Online]. Available: \url{https://www.geeksforgeeks.org/nlp/markov-chains-in-nlp/}. [Accessed: Dec. 15, 2025].
+\bibitem{b5} H. Anton and C. Rorres, \textit{Elementary Linear Algebra: Applications Version}, 11th ed. Hoboken, NJ, USA: Wiley, 2013.
 
-\bibitem{b6} "M/M/1 queue," Wikipedia. [Online]. Available: \url{https://en.wikipedia.org/wiki/M/M/1_queue}. [Accessed: Dec. 16, 2025].
+\bibitem{b6} "Markov Chains in NLP," GeeksforGeeks. [Online]. Available: \url{https://www.geeksforgeeks.org/nlp/markov-chains-in-nlp/}. [Accessed: Dec. 15, 2025].
 
-\bibitem{b7} G. Giambene, ``Markov chains and queuing theory,'' in \emph{Queuing Theory and Telecommunications}, Textbooks in Telecommunication Engineering, Cham, Switzerland: Springer, 2021, doi: 10.1007/978-3-030-75973-5\_4.
+\bibitem{b7} "M/M/1 queue," Wikipedia. [Online]. Available: \url{https://en.wikipedia.org/wiki/M/M/1_queue}. [Accessed: Dec. 16, 2025].
 
-\bibitem{b8} M. Harchol-Balter, \textit{Performance Modeling and Design of Computer Systems: Queueing Theory in Action}. Cambridge, U.K.: Cambridge Univ. Press, 2013.
+\bibitem{b8} G. Giambene, ``Markov chains and queuing theory,'' in \emph{Queuing Theory and Telecommunications}, Textbooks in Telecommunication Engineering, Cham, Switzerland: Springer, 2021, doi: 10.1007/978-3-030-75973-5\_4.
+
+\bibitem{b9} M. Harchol-Balter, \textit{Performance Modeling and Design of Computer Systems: Queueing Theory in Action}. Cambridge, U.K.: Cambridge Univ. Press, 2013.
 
 \end{thebibliography}
 
