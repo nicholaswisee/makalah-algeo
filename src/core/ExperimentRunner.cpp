@@ -13,7 +13,10 @@ ExperimentRunner::ExperimentRunner(double serviceRate, int maxStates, double sim
     : miu(serviceRate), maxStates(maxStates), simTime(simTime), seed(seed) {}
 
 void ExperimentRunner::runVaryingLambdaExperiments() {
-    std::vector<double> lambdaValues = {0.3, 0.5, 0.7, 0.8, 0.9, 0.95, 0.99};
+    // More lambda values for smoother graph visualization
+    std::vector<double> lambdaValues = {0.1, 0.15, 0.2,  0.25, 0.3,  0.35, 0.4,  0.45,
+                                        0.5, 0.55, 0.6,  0.65, 0.7,  0.75, 0.8,  0.85,
+                                        0.9, 0.92, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99};
 
     results.clear();
 

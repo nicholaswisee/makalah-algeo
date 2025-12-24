@@ -87,9 +87,9 @@ Modern computing workloads are highly variable and unpredictable.
 Task arrivals do not occur at fixed intervals, and service times fluctuate
 due to user behavior, network delays, resource contention, and software-level
 scheduling. These uncertainties make deterministic approaches nonoptimal.
-However, probabilistic theory enables engineers to determine whether a server will remain stable
-under a particular load, estimate average waiting times, and understand how
-performance degrades as traffic increases.
+However, probabilistic theory enables a method to determine whether a server
+will remain stable under a particular load, estimate average waiting times,
+and understand how performance degrades as traffic increases.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[width=\columnwidth]{fifo-queuing.jpg}}
@@ -307,9 +307,9 @@ $\lambda$, while a service completion causes a transition from state $n$ to
 $n-1$ at rate $\mu$ for $n > 0$. This structure defines a birth--death process,
 a special class of CTMCs commonly used to model queueing systems \cite{b3}.
 
-The dynamics of a CTMC are characterized by an infinitesimal generator matrix
+The dynamic state of a CTMC are characterized by an infinitesimal generator matrix
 $Q$, whose off-diagonal entries represent transition rates between states and
-whose diagonal entries ensure that each row sums to zero. For the M/M/1 queue,
+diagonal entries ensure that each row sums to zero. For the M/M/1 queue,
 the generator matrix has the form:
 \[
 Q =
@@ -565,11 +565,11 @@ to steady-state behavior.
 \hline
 \textbf{State $n$} & \textbf{Simulated} & \textbf{Theoretical} & \textbf{Rel. Error} \\
 \hline
-0 & 0.1964 & 0.2000 & 1.80\% \\
+0 & 0.1964 & 0.2000 & 1.82\% \\
 1 & 0.1605 & 0.1600 & 0.34\% \\
 2 & 0.1301 & 0.1280 & 1.60\% \\
 3 & 0.1021 & 0.1024 & 0.29\% \\
-4 & 0.0830 & 0.0819 & 1.31\% \\
+4 & 0.0830 & 0.0819 & 1.32\% \\
 \hline
 \end{tabular}
 \label{tab:steady-state}
@@ -592,26 +592,13 @@ To evaluate the effect of increasing utilization, the simulation was repeated
 for multiple values of $\rho$, covering both stable ($\rho < 1$) and unstable
 ($\rho \geq 1$) regimes.
 
-\begin{table}[htbp]
-\caption{System Performance Across Different Utilization Levels}
-\begin{center}
-\begin{tabular}{|c|c|c|c|}
-\hline
-\textbf{$\rho$} & \textbf{Simulated $L$} & \textbf{Theoretical $L$} & \textbf{Status} \\
-\hline
-0.3 & 0.4290 & 0.4286 & Stable \\
-0.5 & 0.9825 & 1.0000 & Stable \\
-0.7 & 2.3252 & 2.3333 & Stable \\
-0.9 & 8.8898 & 9.0000 & Stable \\
-1.0 & 29.5553 & $\infty$ & Unstable \\
-1.1 & 47.5765 & $\infty$ & Unstable \\
-\hline
-\end{tabular}
-\label{tab:utilization}
-\end{center}
-\end{table}
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=\columnwidth]{stability-plot.png}}
+\caption{System performance comparison across different utilization levels}
+\label{fig:stability-comparison}
+\end{figure}
 
-As shown in Table~\ref{tab:utilization}, simulated results closely match
+As shown in Figure~\ref{fig:stability-comparison}, simulated results closely match
 theoretical predictions for all stable configurations. The average queue
 length increases rapidly as $\rho$ approaches 1, consistent with the
 hyperbolic relationship $L = \rho/(1-\rho)$. This highlights the severe
@@ -625,8 +612,8 @@ the service rate.
 
 \subsection{Accuracy Degradation Near the Stability Boundary}
 
-Additional experiments were conducted to examine simulation accuracy near
-the stability boundary.
+To examine simulation accuracy near the stability boundary, additional experiments
+were conducted with $\mu = 1.0$ and varying $\lambda$ values approaching 1.0.
 
 \begin{table}[htbp]
 \caption{Simulation Accuracy for Various Arrival Rates ($\mu = 1.0$)}
@@ -635,11 +622,11 @@ the stability boundary.
 \hline
 \textbf{$\lambda$} & \textbf{$\rho$} & \textbf{Sim. $L$} & \textbf{Theory $L$} & \textbf{Error} \\
 \hline
-0.3 & 0.30 & 0.4290 & 0.4286 & 0.10\% \\
-0.5 & 0.50 & 0.9825 & 1.0000 & 1.75\% \\
-0.7 & 0.70 & 2.3252 & 2.3333 & 0.35\% \\
-0.8 & 0.80 & 4.0355 & 4.0000 & 0.89\% \\
-0.9 & 0.90 & 8.8898 & 9.0000 & 1.22\% \\
+0.30 & 0.30 & 0.4290 & 0.4286 & 0.10\% \\
+0.50 & 0.50 & 0.9825 & 1.0000 & 1.75\% \\
+0.70 & 0.70 & 2.3252 & 2.3333 & 0.35\% \\
+0.80 & 0.80 & 4.0355 & 4.0000 & 0.89\% \\
+0.90 & 0.90 & 8.8898 & 9.0000 & 1.22\% \\
 0.95 & 0.95 & 15.6963 & 19.0000 & 17.39\% \\
 0.99 & 0.99 & 34.9768 & 99.0000 & 64.67\% \\
 \hline
@@ -659,31 +646,33 @@ underestimation.
 
 \subsection{Discussion}
 
-These results confirm the validity of the CTMC-based analytical model for
-the M/M/1 queue and demonstrate the effectiveness of discrete-event
-simulation for performance evaluation.
+Taken together, the results demonstrate strong consistency between
+CTMC-based analytical models and discrete-event simulation for the
+M/M/1 queue. The close agreement observed in stable regimes confirms
+the correctness of the generator-matrix formulation and validates the
+steady-state solution obtained from the balance equations.
 
-\textbf{Model Validation.} The close agreement between simulation and theory
+The minimal margin of error between simulation and theory
 for stable systems validates the steady-state distribution
 $P_n = (1-\rho)\rho^n$ and the average queue length formula
-$L = \rho/(1-\rho)$.
+$L = \rho/(1-\rho)$ as seen from Table~\ref{tab:steady-state} and
+Figure~\ref{fig:stability-comparison}.
 
-\textbf{Stability Effects.} The sharp transition between stable and unstable
-behavior emphasizes the critical importance of maintaining $\rho < 1$.
-Operating near saturation leads to disproportionate increases in queue length
-and delay.
+The sharp transition between stable and unstable behavior emphasizes
+the critical importance of maintaining $\rho < 1$. Operating near saturation
+leads to disproportionate increases in queue length and delay. In practical
+systems, this necessitates careful capacity planning and load management
+to avoid performance collapse.
 
-\textbf{Simulation Limitations.} Near the stability boundary, convergence
-becomes increasingly slow, limiting the accuracy of finite-horizon
-simulations. This suggests that analytical methods or hybrid approaches are
-preferable for high-utilization regimes.
+Finally, these results highlight an important conceptual distinction
+emphasized throughout this work: although discrete-time Markov chains
+rely on eigenvectors associated with eigenvalue 1, steady-state analysis
+for continuous-time systems arises from the null space of the generator
+matrix. The successful alignment between theory and simulation confirms
+that adopting a CTMC-consistent framework is essential for accurately
+modeling real-world queueing systems.
 
-\textbf{Practical Implications.} From a system design perspective, these
-results highlight the necessity of capacity planning with sufficient margin.
-Small increases in traffic intensity near capacity can result in dramatic
-performance degradation.
-
-
+\section{Conclusion}
 
 \appendix{}
 GitHub Repository: \url{https://github.com/nicholaswisee/makalah-algeo}
@@ -725,5 +714,24 @@ throughout the semester much more bearable.
 \bibitem{b8} M. Harchol-Balter, \textit{Performance Modeling and Design of Computer Systems: Queueing Theory in Action}. Cambridge, U.K.: Cambridge Univ. Press, 2013.
 
 \end{thebibliography}
+
+\section*{Statement}
+\begin{center}
+    In this statement, I declare that this paper I have written is my
+    own work, not a duplication or translation of someone else's
+    paper, and is not plagiarized.
+\end{center}
+
+\vspace{1cm}
+\begin{flushright}
+Bandung, 24 December 2025 \\
+\vspace{0.5cm}
+\includegraphics[width=3cm]{signature.png} \\
+\vspace{0.2cm}
+Nicholas Wise Saragih Sumbayak
+
+13524037
+\end{flushright}
+
 
 \end{document}
