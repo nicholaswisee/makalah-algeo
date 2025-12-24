@@ -3,8 +3,11 @@
 % The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
 %Template version as of 6/27/2024
 
+\usepackage{listings}
+\usepackage{xcolor}
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithm}
 \usepackage{algorithmic}
 \usepackage{graphicx}
 \usepackage{textcomp}
@@ -14,6 +17,14 @@
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
+
+\lstdefinestyle{ieeestyle}{
+    basicstyle=\ttfamily\footnotesize,
+    frame=single,
+    breaklines=true,
+    captionpos=b,
+    showstringspaces=false
+}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -409,17 +420,270 @@ continuous-time behavior of the M/M/1 queue, making it a reliable
 numerical benchmark for validating the analytical model.
 
 
+\section{Implementation}
+
+In simulating the M/M/1 queue, results may differ based on the system
+the program is running on. The following results were obtained on a
+system running Windows 11 with an Intel Core i7-13620H processor and
+32 GB of DDR5 RAM.
+
+\subsection{QueueSimulator Class}
+
+\begin{lstlisting}[style=ieeestyle,
+caption={Core structure of the M/M/1 queue simulator}]
+class QueueSimulator {
+private:
+    double lambda, mu, rho;
+    double currentTime;
+    int currentQueueLength;
+
+    std::priority_queue<Event,
+        std::vector<Event>,
+        std::greater<Event>> eventQueue;
+
+    void scheduleArrival();
+    void handleArrival();
+    void handleDeparture();
+
+public:
+    QueueSimulator(double arrivalRate, double serviceRate);
+    void simulate(double duration);
+};
+\end{lstlisting}
+
+The simulation of the M/M/1 queue is encapsulated within the \texttt{QueueSimulator} class.
+The class maintains the current state of the system, including the arrival rate
+($\lambda$), service rate ($\mu$), utilization ($\rho$), current time, and current queue length.
+Arrival and departure events are managed using a time-ordered priority queue.
+
+\subsection{ExperimentRunner Class}
+
+\begin{lstlisting}[style=ieeestyle,
+caption={Structure of the ExperimentRunner class}]
+struct ExperimentResult {
+    double lambda;
+    double rho;
+    double avgQueueLengthSim;
+    double avgQueueLengthTheory;
+};
+
+class ExperimentRunner {
+private:
+    double mu;
+    double simTime;
+
+public:
+    ExperimentRunner(double serviceRate, double simTime);
+    void runVaryingLambdaExperiments();
+};
+\end{lstlisting}
+
+To observe the system's behavior under varying load conditions, the \texttt{ExperimentRunner} class
+is designed to execute multiple simulation runs with varying arrival rates ($\lambda$) as
+shown in Listing 2.
+
+\begin{lstlisting}[style=ieeestyle,
+caption={Structure of CMTC Analyzer}]
+class MarkovChainAnalysis {
+private:
+    int numStates;
+    double lambda, mu;
+    std::vector<std::vector<double>> generatorMatrix;
+
+    void buildGeneratorMatrix();
+
+public:
+    MarkovChainAnalysis(int states,
+                        double arrivalRate,
+                        double serviceRate);
+
+    std::vector<double> computeSteadyState();
+};
+\end{lstlisting}
+
+To solve the steady-state distribution analytically, the \texttt{MarkovChainAnalysis} class
+constructs the generator matrix for a truncated M/M/1 queue and computes the steady-state
+distribution by solving the corresponding linear system as shown in Listing 3.
+
+\subsection{Simulation}
+
+With the defined classes, the simulation driver orchestrates the overall process.
+The main flow of the simulation is outlined in Algorithm 1.
+
+The experimental driver runs three types of simulations to infer the behavior of
+the M/M/1 queue under different parameters, which in this case refers to varying the
+arrival rate $\lambda$ while keeping the service rate $\mu$ constant. Those
+experiments are:
+
+\begin{itemize}
+    \item A discrete-event simulation of the M/M/1 queue based on the input parameters.
+
+    \item Evaluation and comparison of the steady-state statistics obtained from the simulation
+    against the theoretical results derived from queueing theory.
+
+    \item Comparative experiments across different traffic intensities.
+\end{itemize}
+
+\begin{algorithm}[!t]
+\caption{Simulation Driver for M/M/1 Queue}
+\begin{algorithmic}[1]
+\STATE Read input parameters $\lambda, \mu, T$
+\STATE Compute utilization $\rho = \lambda / \mu$
+\IF{$\rho < 1$}
+    \STATE Run discrete-event simulation for duration $T$
+    \STATE Compute steady-state statistics
+    \STATE Compare simulation results with theory
+\ELSE
+    \STATE Run finite-horizon simulation
+    \STATE Observe queue growth behavior
+\ENDIF
+\STATE Perform experiments for multiple $\lambda$ values
+\STATE Export results for analysis
+\end{algorithmic}
+\end{algorithm}
+
 \section{Results and Discussion}
 
-Figure Labels: Use 8 point Times New Roman for Figure labels. Use words
-rather than symbols or abbreviations when writing Figure axis labels to
-avoid confusing the reader. As an example, write the quantity
-``Magnetization'', or ``Magnetization, M'', not just ``M''. If including
-units in the label, present them within parentheses. Do not label axes only
-with units. In the example, write ``Magnetization (A/m)'' or ``Magnetization
-\{A[m(1)]\}'', not just ``A/m''. Do not label axes with a ratio of
-quantities and units. For example, write ``Temperature (K)'', not
-``Temperature/K''.
+This section presents the results obtained from the discrete-event simulation
+of an M/M/1 queue and compares them with analytical predictions derived from
+continuous-time Markov chain (CTMC) theory. The analysis focuses on three key
+aspects: validation of steady-state probabilities for stable systems, the
+impact of utilization on average queue length, and simulation behavior near
+the stability boundary.
+
+\subsection{Steady-State Validation for Stable Systems}
+
+The simulation was first conducted with parameters $\lambda = 0.8$ and
+$\mu = 1.0$, corresponding to a utilization factor of $\rho = 0.8$.
+The system was simulated for $T = 100{,}000$ time units to ensure convergence
+to steady-state behavior.
+
+\begin{table}[htbp]
+\caption{Steady-State Probabilities: Simulation vs Theory ($\rho = 0.8$)}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{State $n$} & \textbf{Simulated} & \textbf{Theoretical} & \textbf{Rel. Error} \\
+\hline
+0 & 0.1964 & 0.2000 & 1.80\% \\
+1 & 0.1605 & 0.1600 & 0.34\% \\
+2 & 0.1301 & 0.1280 & 1.60\% \\
+3 & 0.1021 & 0.1024 & 0.29\% \\
+4 & 0.0830 & 0.0819 & 1.31\% \\
+\hline
+\end{tabular}
+\label{tab:steady-state}
+\end{center}
+\end{table}
+
+Table~\ref{tab:steady-state} compares the simulated steady-state probabilities
+with the theoretical distribution $P_n = (1-\rho)\rho^n$. All relative errors
+remain below 2\%, indicating strong agreement between simulation and theory.
+
+The average queue length further validates this result. The simulation yields
+$L_{\text{sim}} = 4.0355$, while the theoretical value is
+$L_{\text{theory}} = \rho/(1-\rho) = 4.0$. The relative error of 0.89\%
+demonstrates that the simulation accurately captures steady-state performance
+for a stable M/M/1 system.
+
+\subsection{Impact of Utilization on System Performance}
+
+To evaluate the effect of increasing utilization, the simulation was repeated
+for multiple values of $\rho$, covering both stable ($\rho < 1$) and unstable
+($\rho \geq 1$) regimes.
+
+\begin{table}[htbp]
+\caption{System Performance Across Different Utilization Levels}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{$\rho$} & \textbf{Simulated $L$} & \textbf{Theoretical $L$} & \textbf{Status} \\
+\hline
+0.3 & 0.4290 & 0.4286 & Stable \\
+0.5 & 0.9825 & 1.0000 & Stable \\
+0.7 & 2.3252 & 2.3333 & Stable \\
+0.9 & 8.8898 & 9.0000 & Stable \\
+1.0 & 29.5553 & $\infty$ & Unstable \\
+1.1 & 47.5765 & $\infty$ & Unstable \\
+\hline
+\end{tabular}
+\label{tab:utilization}
+\end{center}
+\end{table}
+
+As shown in Table~\ref{tab:utilization}, simulated results closely match
+theoretical predictions for all stable configurations. The average queue
+length increases rapidly as $\rho$ approaches 1, consistent with the
+hyperbolic relationship $L = \rho/(1-\rho)$. This highlights the severe
+performance degradation that occurs near system saturation.
+
+For $\rho \geq 1$, the system becomes unstable and no steady-state
+distribution exists. The observed average queue lengths in these cases depend
+on the finite simulation horizon rather than a theoretical equilibrium,
+confirming unbounded queue growth when the arrival rate equals or exceeds
+the service rate.
+
+\subsection{Accuracy Degradation Near the Stability Boundary}
+
+Additional experiments were conducted to examine simulation accuracy near
+the stability boundary.
+
+\begin{table}[htbp]
+\caption{Simulation Accuracy for Various Arrival Rates ($\mu = 1.0$)}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\textbf{$\lambda$} & \textbf{$\rho$} & \textbf{Sim. $L$} & \textbf{Theory $L$} & \textbf{Error} \\
+\hline
+0.3 & 0.30 & 0.4290 & 0.4286 & 0.10\% \\
+0.5 & 0.50 & 0.9825 & 1.0000 & 1.75\% \\
+0.7 & 0.70 & 2.3252 & 2.3333 & 0.35\% \\
+0.8 & 0.80 & 4.0355 & 4.0000 & 0.89\% \\
+0.9 & 0.90 & 8.8898 & 9.0000 & 1.22\% \\
+0.95 & 0.95 & 15.6963 & 19.0000 & 17.39\% \\
+0.99 & 0.99 & 34.9768 & 99.0000 & 64.67\% \\
+\hline
+\end{tabular}
+\label{tab:accuracy}
+\end{center}
+\end{table}
+
+Table~\ref{tab:accuracy} demonstrates that simulation accuracy deteriorates
+significantly as $\rho \to 1^-$. While errors remain below 2\% for
+$\rho \leq 0.9$, they increase sharply at higher utilization levels.
+This occurs because the theoretical average queue length diverges as
+$\rho \to 1$, requiring increasingly long simulation horizons for accurate
+estimation. At $\rho = 0.99$, the theoretical value of $L = 99$ is not fully
+observed within the finite simulation time, resulting in substantial
+underestimation.
+
+\subsection{Discussion}
+
+These results confirm the validity of the CTMC-based analytical model for
+the M/M/1 queue and demonstrate the effectiveness of discrete-event
+simulation for performance evaluation.
+
+\textbf{Model Validation.} The close agreement between simulation and theory
+for stable systems validates the steady-state distribution
+$P_n = (1-\rho)\rho^n$ and the average queue length formula
+$L = \rho/(1-\rho)$.
+
+\textbf{Stability Effects.} The sharp transition between stable and unstable
+behavior emphasizes the critical importance of maintaining $\rho < 1$.
+Operating near saturation leads to disproportionate increases in queue length
+and delay.
+
+\textbf{Simulation Limitations.} Near the stability boundary, convergence
+becomes increasingly slow, limiting the accuracy of finite-horizon
+simulations. This suggests that analytical methods or hybrid approaches are
+preferable for high-utilization regimes.
+
+\textbf{Practical Implications.} From a system design perspective, these
+results highlight the necessity of capacity planning with sufficient margin.
+Small increases in traffic intensity near capacity can result in dramatic
+performance degradation.
+
+
 
 \appendix{}
 GitHub Repository: \url{https://github.com/nicholaswisee/makalah-algeo}
@@ -427,18 +691,21 @@ GitHub Repository: \url{https://github.com/nicholaswisee/makalah-algeo}
 \section*{Acknowledgment}
 First and foremost, the author would like to express his profound gratitude
 to God Almighty for His blessings, strength, and guidance throughout
-the completion of this research paper.
-
-The author also wishes to convey his deepest appreciation to his dear family
+the completion of this research paper. The author also wishes to convey his deepest appreciation to his dear family
 for their unwavering love, endless prayers, and constant encouragement,
 which serve as the primary motivation in his academic journey.
 
 Furthermore, the author extends his gratitude to Dr. Rinaldi Munir
 and the teaching staff of the IF2123 Linear and Geometrical Algebra
 course at Institut Teknologi Bandung for their invaluable lessons and
-knowledge bestowed upon the author. Finally, thanks are due to the
-author's colleagues in the Informatics Engineering  department for
-their support and collaboration.
+knowledge bestowed upon the author. The author also wishes to thank
+their colleagues in the Informatics Engineering department for their
+support and collaboration throughout the semester.
+
+Lastly, the upmost gratitude is extended to fellow Istana Dago Townhouse
+Unit 8 frequent-stayers for their companionship and support during the
+course of this research. Their presence has made the author's journey
+throughout the semester much more bearable.
 
 \begin{thebibliography}{00}
 \bibitem{b1} M. Harchol-Balter, \textit{Performance Modeling and Design of Computer Systems: Queueing Theory in Action}. Cambridge, U.K.: Cambridge Univ. Press, 2013.
